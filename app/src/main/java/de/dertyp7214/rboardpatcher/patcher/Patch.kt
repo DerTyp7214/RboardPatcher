@@ -17,13 +17,15 @@ class Patch(private val patchMeta: PatchMeta) {
         ZipHelper().unpackZip(path.absolutePath, zip.absolutePath)
         zip.delete()
         path.listFiles()?.forEach {
-            it.copyTo(
-                File(
-                    path,
-                    "${patchMeta.url.split("/").last().removeSuffix(".zip")}_${it.name}"
-                ), true
-            )
-            it.delete()
+            if (!it.name.endsWith(".png")) {
+                it.copyTo(
+                    File(
+                        path,
+                        "${patchMeta.url.split("/").last().removeSuffix(".zip")}_${it.name}"
+                    ), true
+                )
+                it.delete()
+            }
         }
         return path
     }
