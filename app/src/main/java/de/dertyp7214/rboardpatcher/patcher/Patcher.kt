@@ -25,9 +25,15 @@ class Patcher(private val context: Context) {
         patchedThemesPath.listFiles()?.forEach { it.deleteRecursively() }
     }
 
-    fun patchTheme(theme: Theme, vararg patches: Patch, clean: Boolean = true): Pair<File, File?> {
+    fun patchTheme(
+        theme: Theme,
+        vararg patches: Patch,
+        clean: Boolean = true,
+        progress: (Float, String) -> Unit = { _, _ -> }
+    ): Pair<File, File?> {
         val patchFiles = arrayListOf<File>()
         patches.forEach { patch ->
+            progress((patches.indexOf(patch) + 1f) / patches.size * 100f, patch.patchMeta.name)
             patch.getPatches(context, patcherPath)
                 .listFiles { file -> !file.name.endsWith(".meta") }
                 ?.forEach(patchFiles::add)
@@ -84,8 +90,9 @@ class Patcher(private val context: Context) {
         theme: Theme,
         vararg patches: Patch,
         clean: Boolean = true,
+        progress: (Float, String) -> Unit = { _, _ -> },
         callback: (Pair<File, File?>) -> Unit
     ) {
-        doAsync({ patchTheme(theme, *patches, clean = clean) }, callback)
+        doAsync({ patchTheme(theme, *patches, clean = clean, progress = progress) }, callback)
     }
 }

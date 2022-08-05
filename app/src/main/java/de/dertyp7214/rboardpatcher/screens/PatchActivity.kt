@@ -2,10 +2,13 @@ package de.dertyp7214.rboardpatcher.screens
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import de.dertyp7214.rboardpatcher.R
 import de.dertyp7214.rboardpatcher.adapter.PatchAdapter
 import de.dertyp7214.rboardpatcher.api.GitHub
@@ -13,6 +16,7 @@ import de.dertyp7214.rboardpatcher.api.types.PatchMeta
 import de.dertyp7214.rboardpatcher.components.ChipContainer
 import de.dertyp7214.rboardpatcher.components.SearchBar
 import de.dertyp7214.rboardpatcher.core.app
+import de.dertyp7214.rboardpatcher.core.get
 import de.dertyp7214.rboardpatcher.core.openShareThemeDialog
 import de.dertyp7214.rboardpatcher.core.parseThemeDataClass
 import de.dertyp7214.rboardpatcher.patcher.Patch
@@ -20,13 +24,18 @@ import de.dertyp7214.rboardpatcher.patcher.Theme
 import de.dertyp7214.rboardpatcher.utils.ThemeUtils
 import de.dertyp7214.rboardpatcher.utils.ZipHelper
 import de.dertyp7214.rboardpatcher.utils.doAsync
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.math.roundToInt
 
 class PatchActivity : AppCompatActivity() {
 
     private val unfiltered = arrayListOf<PatchMeta>()
     private val list = arrayListOf<PatchMeta>()
 
+    private val progressBar by lazy { findViewById<LinearProgressIndicator>(R.id.progressBar) }
     private val patchTheme by lazy { findViewById<MaterialButton>(R.id.patchTheme) }
     private val shareTheme by lazy { findViewById<MaterialButton>(R.id.shareButton) }
     private val searchBar by lazy { findViewById<SearchBar>(R.id.searchBar) }
@@ -113,12 +122,33 @@ class PatchActivity : AppCompatActivity() {
     }
 
     private fun patchTheme(theme: Theme, install: Boolean) {
+        patchTheme.isEnabled = false
+        shareTheme.isEnabled = false
+        adapter.isEnabled = false
+        progressBar.progress = 0
+        progressBar.visibility = VISIBLE
         app.patcher.patchTheme(
             theme,
             *adapter.getSelected().map { Patch(it) }.toTypedArray(),
-            clean = true
+            progress = { progress, stage ->
+                CoroutineScope(Dispatchers.Main).launch {
+                    patchTheme.text = "Applying: $stage"
+                    progressBar.setProgress(progress.roundToInt(), true)
+                }
+            }
         ) {
-            openShareThemeDialog { dialogInterface, name, author ->
+            patchTheme.isEnabled = true
+            shareTheme.isEnabled = true
+            adapter.isEnabled = true
+            progressBar.visibility = GONE
+
+            patchTheme.setText(R.string.addToManager)
+
+            openShareThemeDialog(negative = {
+                it.dismiss()
+                MainActivity::class.java[this@PatchActivity]
+                finish()
+            }) { dialogInterface, name, author ->
                 val themeFile = File(it.first.parentFile, "${name.replace(" ", "_")}.zip")
                 val imageFile = File(themeFile.absolutePath.removeSuffix(".zip"))
                 it.first.renameTo(themeFile)
@@ -136,6 +166,8 @@ class PatchActivity : AppCompatActivity() {
 
                 ThemeUtils.shareTheme(this, pack, install)
                 dialogInterface.dismiss()
+                MainActivity::class.java[this@PatchActivity]
+                finish()
             }
         }
     }
