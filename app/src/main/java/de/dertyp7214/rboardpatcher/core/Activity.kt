@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.RenderEffect
 import android.graphics.Shader
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -28,18 +29,23 @@ fun Activity.openDialog(
     cancelable: Boolean = true,
     block: View.(DialogInterface) -> Unit
 ): AlertDialog {
-    content.setRenderEffect(
-        RenderEffect.createBlurEffect(
-            10F,
-            10F,
-            Shader.TileMode.REPEAT
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        content.setRenderEffect(
+            RenderEffect.createBlurEffect(
+                10F,
+                10F,
+                Shader.TileMode.REPEAT
+            )
         )
-    )
+    }
     val view = layoutInflater.inflate(layout, null)
     return MaterialAlertDialogBuilder(this)
         .setCancelable(cancelable)
         .setView(view)
-        .setOnDismissListener { content.setRenderEffect(null) }
+        .setOnDismissListener { if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            content.setRenderEffect(null)
+        }
+        }
         .create().also { dialog ->
             block(view, dialog)
             dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
