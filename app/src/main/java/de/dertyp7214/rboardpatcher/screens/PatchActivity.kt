@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -57,6 +58,11 @@ class PatchActivity : AppCompatActivity() {
             patchTheme.isEnabled = it.isNotEmpty() && managerInstalled
             shareTheme.isEnabled = it.isNotEmpty()
         }
+    }
+
+    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        MainActivity::class.java[this]
+        finish()
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -177,10 +183,8 @@ class PatchActivity : AppCompatActivity() {
                 val pack = File(themeFile.parentFile, "pack.pack")
                 ZipHelper().zip(files.map { file -> file.absolutePath }, pack.absolutePath)
 
-                MainActivity::class.java[this]
-                ThemeUtils.shareTheme(this, pack, install)
+                ThemeUtils.shareTheme(this, pack, install, resultLauncher)
                 dialogInterface.dismiss()
-                finish()
             }
         }
     }
