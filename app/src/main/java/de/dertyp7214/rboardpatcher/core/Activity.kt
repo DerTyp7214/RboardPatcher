@@ -29,22 +29,19 @@ fun Activity.openDialog(
     cancelable: Boolean = true,
     block: View.(DialogInterface) -> Unit
 ): AlertDialog {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        content.setRenderEffect(
-            RenderEffect.createBlurEffect(
-                10F,
-                10F,
-                Shader.TileMode.REPEAT
-            )
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) content.setRenderEffect(
+        RenderEffect.createBlurEffect(
+            10F,
+            10F,
+            Shader.TileMode.REPEAT
         )
-    }
+    )
     val view = layoutInflater.inflate(layout, null)
     return MaterialAlertDialogBuilder(this)
         .setCancelable(cancelable)
         .setView(view)
-        .setOnDismissListener { if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            content.setRenderEffect(null)
-        }
+        .setOnDismissListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) content.setRenderEffect(null)
         }
         .create().also { dialog ->
             block(view, dialog)
