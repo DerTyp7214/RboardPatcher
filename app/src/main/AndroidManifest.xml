@@ -3,9 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission
-        android:name="android.permission.QUERY_ALL_PACKAGES"
-        tools:ignore="QueryAllPackagesPermission" />
+
+    <queries>
+        <package android:name="de.dertyp7214.rboardthememanager"/>
+        <package android:name="de.dertyp7214.rboardthememanager.debug"/>
+    </queries>
 
     <application
         android:name=".Application"
