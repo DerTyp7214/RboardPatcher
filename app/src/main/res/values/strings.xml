@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Rboard Patcher</string>
+    <string name="search">Search</string>
+    <string name="patchTheme">Patch Theme</string>
+    <string name="share_theme">Share Theme</string>
+    <string name="addToManager">Add to Manager</string>
+    <string name="pickTheme">Pick Theme</string>
+    <string name="name">Name</string>
+    <string name="author">Author</string>
 </resources>
