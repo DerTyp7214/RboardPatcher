@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,6 +25,7 @@ import de.dertyp7214.rboardpatcher.patcher.Theme
 import de.dertyp7214.rboardpatcher.utils.ThemeUtils
 import de.dertyp7214.rboardpatcher.utils.ZipHelper
 import de.dertyp7214.rboardpatcher.utils.doAsync
+import de.dertyp7214.rboardpatcher.utils.isPackageInstalled
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,6 +37,16 @@ class PatchActivity : AppCompatActivity() {
     private val unfiltered = arrayListOf<PatchMeta>()
     private val list = arrayListOf<PatchMeta>()
 
+    private val managerInstalled by lazy {
+        isPackageInstalled(
+            "de.dertyp7214.rboardthememanager",
+            packageManager
+        ) || isPackageInstalled(
+            "de.dertyp7214.rboardthememanager.debug",
+            packageManager
+        )
+    }
+
     private val progressBar by lazy { findViewById<LinearProgressIndicator>(R.id.progressBar) }
     private val patchTheme by lazy { findViewById<MaterialButton>(R.id.patchTheme) }
     private val shareTheme by lazy { findViewById<MaterialButton>(R.id.shareButton) }
@@ -43,9 +55,14 @@ class PatchActivity : AppCompatActivity() {
     private val recyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerview) }
     private val adapter by lazy {
         PatchAdapter(this, list) {
-            patchTheme.isEnabled = it.isNotEmpty()
+            patchTheme.isEnabled = it.isNotEmpty() && managerInstalled
             shareTheme.isEnabled = it.isNotEmpty()
         }
+    }
+
+    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        MainActivity::class.java[this]
+        finish()
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -148,7 +165,9 @@ class PatchActivity : AppCompatActivity() {
                 it.dismiss()
                 MainActivity::class.java[this@PatchActivity]
                 finish()
-            }) { dialogInterface, name, author ->
+            }) { dialogInterface, n, a ->
+                val name = n.ifBlank { theme.name }
+                val author = a.ifBlank { "DerTyp7214" }
                 val themeFile = File(it.first.parentFile, "${name.replace(" ", "_")}.zip")
                 val imageFile = File(themeFile.absolutePath.removeSuffix(".zip"))
                 it.first.renameTo(themeFile)
@@ -164,10 +183,8 @@ class PatchActivity : AppCompatActivity() {
                 val pack = File(themeFile.parentFile, "pack.pack")
                 ZipHelper().zip(files.map { file -> file.absolutePath }, pack.absolutePath)
 
-                ThemeUtils.shareTheme(this, pack, install)
+                ThemeUtils.shareTheme(this, pack, install, resultLauncher)
                 dialogInterface.dismiss()
-                MainActivity::class.java[this@PatchActivity]
-                finish()
             }
         }
     }
