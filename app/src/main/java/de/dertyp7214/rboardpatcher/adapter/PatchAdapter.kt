@@ -25,8 +25,10 @@ class PatchAdapter(
         40
     )
     private val selected = ArrayListWrapper(list.map { false }) {
-        onSelect(getSelected())
+        if (isEnabled) onSelect(getSelected())
     }
+
+    var isEnabled = true
 
     @Suppress("MemberVisibilityCanBePrivate")
     fun getSelected(): List<PatchMeta> {
@@ -73,10 +75,12 @@ class PatchAdapter(
         holder.author.text = patchMeta.author
 
         holder.root.setOnClickListener {
-            selected[position] = !selected[position]
+            if (isEnabled) {
+                selected[position] = !selected[position]
 
-            if (selected[position]) holder.root.setCardBackgroundColor(selectedColor)
-            else holder.root.setCardBackgroundColor(Color.TRANSPARENT)
+                if (selected[position]) holder.root.setCardBackgroundColor(selectedColor)
+                else holder.root.setCardBackgroundColor(Color.TRANSPARENT)
+            }
         }
     }
 

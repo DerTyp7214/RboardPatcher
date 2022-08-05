@@ -49,7 +49,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="8dp"
+        android:ellipsize="end"
         android:enabled="false"
+        android:maxLines="1"
         android:text="@string/addToManager"
         app:cornerRadius="@dimen/roundCorners"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -71,4 +73,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider"
         tools:ignore="ContentDescription" />
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progressBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>

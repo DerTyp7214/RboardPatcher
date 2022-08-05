@@ -9,7 +9,7 @@ import de.dertyp7214.rboardpatcher.utils.ZipHelper
 import de.dertyp7214.rboardpatcher.utils.doAsync
 import java.io.File
 
-class Patch(private val patchMeta: PatchMeta) {
+class Patch(val patchMeta: PatchMeta) {
     fun getPatches(context: Context, patcherPath: File = context.cacheDir): File {
         val path = File(patcherPath, patchMeta.name)
         val zip = File(patcherPath, "${patchMeta.name}.zip")
