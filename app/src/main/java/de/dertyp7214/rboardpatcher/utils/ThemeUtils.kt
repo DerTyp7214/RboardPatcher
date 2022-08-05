@@ -21,6 +21,18 @@ object ThemeUtils {
             .setAction(if (install) Intent.ACTION_VIEW else Intent.ACTION_SEND)
             .setDataAndType(uri, "application/pack")
             .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION).apply {
+                if (install) {
+                    if (isPackageInstalled(
+                            "de.dertyp7214.rboardthememanager",
+                            activity.packageManager
+                        )
+                    ) setPackage("de.dertyp7214.rboardthememanager")
+                    else if (isPackageInstalled(
+                            "de.dertyp7214.rboardthememanager.debug",
+                            activity.packageManager
+                        )
+                    ) setPackage("de.dertyp7214.rboardthememanager.debug")
+                }
                 activity.startActivity(
                     Intent.createChooser(
                         this,
