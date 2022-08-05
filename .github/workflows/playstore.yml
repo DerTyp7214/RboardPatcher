@@ -16,7 +16,6 @@ jobs:
   build:
     name: Deploy to Google Play
     runs-on: ubuntu-latest
-    if: 'false'
     steps:
       - name: Checkout
         uses: actions/checkout@v3
