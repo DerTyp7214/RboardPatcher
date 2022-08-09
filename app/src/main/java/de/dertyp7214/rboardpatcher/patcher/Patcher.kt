@@ -58,8 +58,8 @@ class Patcher(private val context: Context) {
             cssFiles.forEach {
                 metadata.styleSheets.add(it.name)
             }
-            borderCssFiles.forEach {
-                metadata.flavors.find { it.type.lowercase() == "border" }?.styleSheets?.add(it.name)
+            borderCssFiles.forEach { file ->
+                metadata.flavors.find { it.type.lowercase() == "border" }?.styleSheets?.add(file.name)
             }
             File(patchingPath, "metadata.json").writeText(gson.toJson(metadata))
             patchingPath.listFiles()?.let {

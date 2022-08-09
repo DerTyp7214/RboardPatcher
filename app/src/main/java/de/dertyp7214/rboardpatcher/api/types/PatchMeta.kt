@@ -6,5 +6,7 @@ data class PatchMeta(
     val tags: List<String>,
     val size: Long,
     val date: Long,
-    val name: String
+    val name: String,
+    val font: String?,
+    val description: String?
 )
