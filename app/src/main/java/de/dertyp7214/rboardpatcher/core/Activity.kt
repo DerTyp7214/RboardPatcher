@@ -6,12 +6,15 @@ import android.graphics.Color
 import android.graphics.RenderEffect
 import android.graphics.Shader
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Build
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
+import androidx.browser.customtabs.CustomTabColorSchemeParams
+import androidx.browser.customtabs.CustomTabsIntent
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.dertyp7214.rboardpatcher.Application
 import de.dertyp7214.rboardpatcher.R
@@ -23,6 +26,22 @@ inline val Activity.content: View
     get() {
         return findViewById(android.R.id.content)
     }
+
+fun Activity.openUrl(url: String) {
+    CustomTabsIntent.Builder()
+        .setShowTitle(true)
+        .setDefaultColorSchemeParams(
+            CustomTabColorSchemeParams
+                .Builder()
+                .setToolbarColor(getAttr(androidx.appcompat.R.attr.colorBackgroundFloating))
+                .setNavigationBarColor(getAttr(androidx.appcompat.R.attr.colorBackgroundFloating))
+                .setSecondaryToolbarColor(getAttr(androidx.appcompat.R.attr.colorBackgroundFloating))
+                .setNavigationBarDividerColor(getAttr(androidx.appcompat.R.attr.colorBackgroundFloating))
+                .build()
+        )
+        .build()
+        .launchUrl(this, Uri.parse(url))
+}
 
 fun Activity.openDialog(
     @LayoutRes layout: Int,

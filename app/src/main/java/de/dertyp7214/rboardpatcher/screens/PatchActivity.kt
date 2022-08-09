@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
@@ -15,6 +14,7 @@ import de.dertyp7214.rboardpatcher.R
 import de.dertyp7214.rboardpatcher.adapter.PatchAdapter
 import de.dertyp7214.rboardpatcher.api.GitHub
 import de.dertyp7214.rboardpatcher.api.types.PatchMeta
+import de.dertyp7214.rboardpatcher.components.BaseActivity
 import de.dertyp7214.rboardpatcher.components.ChipContainer
 import de.dertyp7214.rboardpatcher.components.SearchBar
 import de.dertyp7214.rboardpatcher.core.*
@@ -23,33 +23,16 @@ import de.dertyp7214.rboardpatcher.patcher.Theme
 import de.dertyp7214.rboardpatcher.utils.ThemeUtils
 import de.dertyp7214.rboardpatcher.utils.ZipHelper
 import de.dertyp7214.rboardpatcher.utils.doAsync
-import de.dertyp7214.rboardpatcher.utils.isPackageInstalled
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 import kotlin.math.roundToInt
 
-class PatchActivity : AppCompatActivity() {
+class PatchActivity : BaseActivity() {
 
     private val unfiltered = arrayListOf<PatchMeta>()
     private val list = arrayListOf<PatchMeta>()
-
-    private val managerPackage = "de.dertyp7214.rboardthememanager"
-    private val managerPackageName by lazy {
-        if (isPackageInstalled(
-                managerPackage,
-                packageManager
-            )
-        ) managerPackage
-        else if (isPackageInstalled(
-                "$managerPackage.debug",
-                packageManager
-            )
-        ) "$managerPackage.debug"
-        else null
-    }
-    private val managerInstalled by lazy { managerPackageName != null }
 
     private val progressBar by lazy { findViewById<LinearProgressIndicator>(R.id.progressBar) }
     private val patchTheme by lazy { findViewById<MaterialButton>(R.id.patchTheme) }
