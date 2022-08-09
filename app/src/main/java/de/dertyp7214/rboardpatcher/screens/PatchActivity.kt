@@ -1,6 +1,7 @@
 package de.dertyp7214.rboardpatcher.screens
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -16,10 +17,7 @@ import de.dertyp7214.rboardpatcher.api.GitHub
 import de.dertyp7214.rboardpatcher.api.types.PatchMeta
 import de.dertyp7214.rboardpatcher.components.ChipContainer
 import de.dertyp7214.rboardpatcher.components.SearchBar
-import de.dertyp7214.rboardpatcher.core.app
-import de.dertyp7214.rboardpatcher.core.get
-import de.dertyp7214.rboardpatcher.core.openShareThemeDialog
-import de.dertyp7214.rboardpatcher.core.parseThemeDataClass
+import de.dertyp7214.rboardpatcher.core.*
 import de.dertyp7214.rboardpatcher.patcher.Patch
 import de.dertyp7214.rboardpatcher.patcher.Theme
 import de.dertyp7214.rboardpatcher.utils.ThemeUtils
@@ -37,15 +35,21 @@ class PatchActivity : AppCompatActivity() {
     private val unfiltered = arrayListOf<PatchMeta>()
     private val list = arrayListOf<PatchMeta>()
 
-    private val managerInstalled by lazy {
-        isPackageInstalled(
-            "de.dertyp7214.rboardthememanager",
-            packageManager
-        ) || isPackageInstalled(
-            "de.dertyp7214.rboardthememanager.debug",
-            packageManager
-        )
+    private val managerPackage = "de.dertyp7214.rboardthememanager"
+    private val managerPackageName by lazy {
+        if (isPackageInstalled(
+                managerPackage,
+                packageManager
+            )
+        ) managerPackage
+        else if (isPackageInstalled(
+                "$managerPackage.debug",
+                packageManager
+            )
+        ) "$managerPackage.debug"
+        else null
     }
+    private val managerInstalled by lazy { managerPackageName != null }
 
     private val progressBar by lazy { findViewById<LinearProgressIndicator>(R.id.progressBar) }
     private val patchTheme by lazy { findViewById<MaterialButton>(R.id.patchTheme) }
@@ -54,16 +58,33 @@ class PatchActivity : AppCompatActivity() {
     private val chipContainer by lazy { findViewById<ChipContainer>(R.id.chipContainer) }
     private val recyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerview) }
     private val adapter by lazy {
-        PatchAdapter(this, list) {
+        PatchAdapter(this, list, unfiltered, { patchMeta ->
+            openDialog(
+                patchMeta.description ?: "No Description!",
+                "Description",
+                getString(android.R.string.ok),
+                getString(android.R.string.cancel)
+            ) {
+                it.dismiss()
+            }
+        }) {
             patchTheme.isEnabled = it.isNotEmpty() && managerInstalled
             shareTheme.isEnabled = it.isNotEmpty()
         }
     }
 
-    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        MainActivity::class.java[this]
-        finish()
-    }
+    private val resultLauncherMain =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            MainActivity::class.java[this]
+            finish()
+        }
+    private val resultLauncherManager =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val intent = managerPackageName?.let(packageManager::getLaunchIntentForPackage)
+                ?: Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -115,7 +136,6 @@ class PatchActivity : AppCompatActivity() {
                             searchFilter
                         )
                     )
-                    adapter.unselectAll()
                     adapter.notifyDataChanged()
                 }
             }
@@ -131,7 +151,6 @@ class PatchActivity : AppCompatActivity() {
                             searchFilter
                         )
                     )
-                    adapter.unselectAll()
                     adapter.notifyDataChanged()
                 }
             }
@@ -183,7 +202,12 @@ class PatchActivity : AppCompatActivity() {
                 val pack = File(themeFile.parentFile, "pack.pack")
                 ZipHelper().zip(files.map { file -> file.absolutePath }, pack.absolutePath)
 
-                ThemeUtils.shareTheme(this, pack, install, resultLauncher)
+                ThemeUtils.shareTheme(
+                    this,
+                    pack,
+                    install,
+                    if (install) resultLauncherManager else resultLauncherMain
+                )
                 dialogInterface.dismiss()
             }
         }

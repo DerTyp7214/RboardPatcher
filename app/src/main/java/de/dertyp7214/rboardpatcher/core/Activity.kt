@@ -50,6 +50,47 @@ fun Activity.openDialog(
         }
 }
 
+fun Activity.openDialog(
+    message: CharSequence,
+    title: String,
+    positiveText: String,
+    negativeText: String,
+    cancelable: Boolean = false,
+    negative: ((dialogInterface: DialogInterface) -> Unit)? = { it.dismiss() },
+    positive: (dialogInterface: DialogInterface) -> Unit
+): AlertDialog {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) content.setRenderEffect(
+        RenderEffect.createBlurEffect(
+            10F,
+            10F,
+            Shader.TileMode.REPEAT
+        )
+    )
+    return MaterialAlertDialogBuilder(this)
+        .setCancelable(cancelable)
+        .setMessage(message)
+        .setTitle(title)
+        .setPositiveButton(positiveText) { dialogInterface, _ -> positive(dialogInterface) }
+        .setOnDismissListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) content.setRenderEffect(
+                null
+            )
+        }
+        .apply {
+            if (negative != null) setNegativeButton(negativeText) { dialogInterface, _ ->
+                negative.invoke(
+                    dialogInterface
+                )
+            }
+        }
+        .create().also {
+            it.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            it.findViewById<View>(android.R.id.content)?.background =
+                getDrawable(R.drawable.dialog_background)
+            it.show()
+        }
+}
+
 fun Activity.openShareThemeDialog(
     negative: ((dialogInterface: DialogInterface) -> Unit) = { it.dismiss() },
     positive: (dialogInterface: DialogInterface, name: String, author: String) -> Unit
