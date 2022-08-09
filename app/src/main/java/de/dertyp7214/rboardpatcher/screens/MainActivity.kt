@@ -29,11 +29,11 @@ class MainActivity : BaseActivity() {
         arrayListOf<MainOption>().apply {
             if (managerInstalled) {
                 if (isPackageInstalled(managerPackage, packageManager))
-                    add(MainOption(R.drawable.ic_launcher_manager, "Open Rboard Manager") {
+                    add(MainOption(R.drawable.ic_rboard, "Open Rboard Manager") {
                         startActivity(packageManager.getLaunchIntentForPackage(managerPackage))
                     })
                 if (isPackageInstalled("$managerPackage.debug", packageManager))
-                    add(MainOption(R.drawable.ic_launcher_manager, "Open Rboard Manager Debug") {
+                    add(MainOption(R.drawable.ic_rboard, "Open Rboard Manager Debug") {
                         startActivity(packageManager.getLaunchIntentForPackage("$managerPackage.debug"))
                     })
             } else add(MainOption(R.drawable.ic_xda, "Open XDA") {

@@ -23,9 +23,10 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="6dp"
+            android:padding="8dp"
             app:tint="?attr/colorOnSecondary"
             tools:ignore="ContentDescription"
-            tools:srcCompat="@drawable/ic_launcher_manager" />
+            tools:srcCompat="@drawable/ic_rboard" />
 
         <TextView
             android:id="@+id/title"
