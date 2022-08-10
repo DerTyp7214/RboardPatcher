@@ -18,7 +18,7 @@ import de.dertyp7214.rboardpatcher.core.getAttr
 class PatchAdapter(
     private val context: Context,
     private val list: List<PatchMeta>,
-    unfiltered: List<PatchMeta>,
+    private val unfiltered: List<PatchMeta>,
     private val onLongPress: (PatchMeta) -> Unit = {},
     private val onSelect: (List<PatchMeta>) -> Unit
 ) : RecyclerView.Adapter<PatchAdapter.ViewHolder>() {
@@ -50,8 +50,16 @@ class PatchAdapter(
         }
     }
 
+    fun select(list: List<String>) {
+        val tmp = selected.map { Pair(it.key.getSafeName(), it.key) }
+        list.forEach { patchName ->
+            tmp[patchName]?.let { selected.set(it, true, internal = true) }
+        }
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     fun notifyDataChanged() {
+        selected.setItems(unfiltered)
         notifyDataSetChanged()
     }
 
@@ -107,7 +115,15 @@ class PatchAdapter(
             onSet
         )
 
+        fun setItems(map: List<PatchMeta>) {
+            val tmp = map.associateWith { this.map[it] == true }
+            this.map.clear()
+            this.map.putAll(tmp)
+        }
+
         fun filter(predicate: (Map.Entry<PatchMeta, Boolean>) -> Boolean) = map.filter(predicate)
+        fun <A, B> map(transform: (Map.Entry<PatchMeta, Boolean>) -> Pair<A, B>) =
+            map.map(transform).toMap()
 
         @Suppress("UNCHECKED_CAST")
         operator fun get(index: PatchMeta) = try {
@@ -116,13 +132,15 @@ class PatchAdapter(
             false
         }
 
-        operator fun set(index: PatchMeta, e: Boolean) {
+        fun set(index: PatchMeta, e: Boolean, internal: Boolean) {
             try {
                 map[index] = e
-                onSet(map)
+                if (!internal) onSet(map)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
+
+        operator fun set(index: PatchMeta, e: Boolean) = set(index, e, false)
     }
 }
