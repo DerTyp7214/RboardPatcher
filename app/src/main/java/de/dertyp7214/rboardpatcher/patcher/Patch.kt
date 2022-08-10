@@ -21,7 +21,7 @@ class Patch(val patchMeta: PatchMeta) {
                 it.copyTo(
                     File(
                         path,
-                        "${patchMeta.url.split("/").last().removeSuffix(".zip")}_${it.name}"
+                        "${patchMeta.getSafeName()}_${it.name}"
                     ), true
                 )
                 it.delete()

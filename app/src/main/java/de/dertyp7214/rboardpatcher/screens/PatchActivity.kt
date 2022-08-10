@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.LinearProgressIndicator
+import com.google.gson.Gson
 import de.dertyp7214.rboardpatcher.R
 import de.dertyp7214.rboardpatcher.adapter.PatchAdapter
 import de.dertyp7214.rboardpatcher.api.GitHub
@@ -20,6 +21,7 @@ import de.dertyp7214.rboardpatcher.components.SearchBar
 import de.dertyp7214.rboardpatcher.core.*
 import de.dertyp7214.rboardpatcher.patcher.Patch
 import de.dertyp7214.rboardpatcher.patcher.Theme
+import de.dertyp7214.rboardpatcher.patcher.types.FileMap
 import de.dertyp7214.rboardpatcher.utils.ThemeUtils
 import de.dertyp7214.rboardpatcher.utils.ZipHelper
 import de.dertyp7214.rboardpatcher.utils.doAsync
@@ -84,13 +86,19 @@ class PatchActivity : BaseActivity() {
             doAsync({
                 val patches: List<PatchMeta> = GitHub.GboardThemes.Patches["patches.json"]
                 val theme = themeDataClass.getTheme(this)
-                Pair(patches, theme)
-            }) { (patches, theme) ->
+                val filesMap = app.patcher.preparePatch(theme)?.let {
+                    it.find { file -> file.name == "fileMap.json" }?.readText()
+                        ?.let { text -> Gson().fromJson(text, FileMap::class.java) }
+                }
+                Triple(patches, theme, filesMap)
+            }) { (patches, theme, filesMap) ->
                 unfiltered.clear()
                 unfiltered.addAll(patches)
                 list.clear()
                 list.addAll(unfiltered)
                 adapter.notifyDataChanged()
+
+                filesMap?.patches?.let(adapter::select)
 
                 val tags = arrayListOf<String>()
                 list.forEach {
@@ -99,11 +107,11 @@ class PatchActivity : BaseActivity() {
                 chipContainer.setChips(tags)
 
                 patchTheme.setOnClickListener {
-                    patchTheme(theme, true)
+                    patchTheme(theme, filesMap ?: FileMap(), true)
                 }
 
                 shareTheme.setOnClickListener {
-                    patchTheme(theme, false)
+                    patchTheme(theme, filesMap ?: FileMap(), false)
                 }
             }
 
@@ -140,15 +148,23 @@ class PatchActivity : BaseActivity() {
         }
     }
 
-    private fun patchTheme(theme: Theme, install: Boolean) {
+    private fun patchTheme(theme: Theme, preselected: FileMap, install: Boolean) {
         patchTheme.isEnabled = false
         shareTheme.isEnabled = false
         adapter.isEnabled = false
         progressBar.progress = 0
         progressBar.visibility = VISIBLE
+        val selected = adapter.getSelected()
+        val toRemove = hashMapOf<String, List<String>>().apply {
+            preselected.patches.forEach { patch ->
+                if (selected.find { it.getSafeName() == patch } == null) this[patch] =
+                    preselected.patchFiles[patch] ?: listOf()
+            }
+        }
         app.patcher.patchTheme(
             theme,
-            *adapter.getSelected().map { Patch(it) }.toTypedArray(),
+            toRemove,
+            *selected.map { Patch(it) }.toTypedArray(),
             progress = { progress, stage ->
                 CoroutineScope(Dispatchers.Main).launch {
                     patchTheme.text = "Applying: $stage"

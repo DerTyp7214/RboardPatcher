@@ -9,4 +9,6 @@ data class PatchMeta(
     val name: String,
     val font: String?,
     val description: String?
-)
+) {
+    fun getSafeName() = url.split("/").last().removeSuffix(".zip")
+}
