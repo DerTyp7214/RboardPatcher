@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.edit
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
@@ -71,10 +72,17 @@ class PatchActivity : BaseActivity() {
             finish()
         }
 
+    private val lastVisit by lazy { preferences.getLong("lastVisit", System.currentTimeMillis()) }
+
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_patch)
+
+        preferences.edit {
+            putLong("previousVisit", lastVisit)
+            putLong("lastVisit", System.currentTimeMillis())
+        }
 
         val themeDataClass = intent.getStringExtra("themePath")?.parseThemeDataClass()
 
@@ -93,7 +101,12 @@ class PatchActivity : BaseActivity() {
                 Triple(patches, theme, filesMap)
             }) { (patches, theme, filesMap) ->
                 unfiltered.clear()
-                unfiltered.addAll(patches)
+                unfiltered.addAll(patches.sortedWith { a, b ->
+                    if (a.date > lastVisit && b.date > lastVisit) a.name.compareTo(b.name, true)
+                    else if (a.date > lastVisit) -1
+                    else if (b.date > lastVisit) 1
+                    else a.name.compareTo(b.name, true)
+                })
                 list.clear()
                 list.addAll(unfiltered)
                 adapter.notifyDataChanged()

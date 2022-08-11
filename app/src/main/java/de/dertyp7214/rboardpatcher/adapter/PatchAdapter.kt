@@ -14,6 +14,7 @@ import de.dertyp7214.colorutilsc.ColorUtilsC
 import de.dertyp7214.rboardpatcher.R
 import de.dertyp7214.rboardpatcher.api.types.PatchMeta
 import de.dertyp7214.rboardpatcher.core.getAttr
+import de.dertyp7214.rboardpatcher.core.preferences
 
 class PatchAdapter(
     private val context: Context,
@@ -34,6 +35,9 @@ class PatchAdapter(
     private val selected = HashMapWrapper(unfiltered) {
         if (isEnabled) onSelect(getSelected())
     }
+
+    private val previousVisit =
+        context.preferences.getLong("previousVisit", System.currentTimeMillis())
 
     var isEnabled = true
 
@@ -67,6 +71,7 @@ class PatchAdapter(
         val root = v as MaterialCardView
         val title: TextView = v.findViewById(R.id.title)
         val author: TextView = v.findViewById(R.id.author)
+        val newTag: TextView = v.findViewById(R.id.newTag)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -85,6 +90,8 @@ class PatchAdapter(
 
         holder.title.text = patchMeta.name
         holder.author.text = patchMeta.author
+
+        holder.newTag.visibility = if (patchMeta.date > previousVisit) View.VISIBLE else View.GONE
 
         holder.root.setOnLongClickListener {
             onLongPress(patchMeta)
