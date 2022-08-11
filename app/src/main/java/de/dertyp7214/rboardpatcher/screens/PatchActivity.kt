@@ -72,13 +72,15 @@ class PatchActivity : BaseActivity() {
             finish()
         }
 
+    private val lastVisit by lazy { preferences.getLong("lastVisit", System.currentTimeMillis()) }
+
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_patch)
 
         preferences.edit {
-            putLong("previousVisit", preferences.getLong("lastVisit", System.currentTimeMillis()))
+            putLong("previousVisit", lastVisit)
             putLong("lastVisit", System.currentTimeMillis())
         }
 
@@ -99,7 +101,12 @@ class PatchActivity : BaseActivity() {
                 Triple(patches, theme, filesMap)
             }) { (patches, theme, filesMap) ->
                 unfiltered.clear()
-                unfiltered.addAll(patches)
+                unfiltered.addAll(patches.sortedWith { a, b ->
+                    if (a.date > lastVisit && b.date > lastVisit) a.name.compareTo(b.name, true)
+                    else if (a.date > lastVisit) -1
+                    else if (b.date > lastVisit) 1
+                    else a.name.compareTo(b.name, true)
+                })
                 list.clear()
                 list.addAll(unfiltered)
                 adapter.notifyDataChanged()
