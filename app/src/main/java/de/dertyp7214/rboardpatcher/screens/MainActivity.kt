@@ -9,12 +9,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.anggrayudi.storage.SimpleStorage
 import com.anggrayudi.storage.callback.FilePickerCallback
+import com.anggrayudi.storage.file.extension
 import com.anggrayudi.storage.file.openInputStream
 import de.dertyp7214.rboardpatcher.R
 import de.dertyp7214.rboardpatcher.adapter.MainOptionAdapter
 import de.dertyp7214.rboardpatcher.components.BaseActivity
 import de.dertyp7214.rboardpatcher.components.MarginItemDecoration
 import de.dertyp7214.rboardpatcher.core.dp
+import de.dertyp7214.rboardpatcher.core.openDialog
 import de.dertyp7214.rboardpatcher.core.openUrl
 import de.dertyp7214.rboardpatcher.core.set
 import de.dertyp7214.rboardpatcher.screens.types.MainOption
@@ -61,20 +63,29 @@ class MainActivity : BaseActivity() {
 
             override fun onFileSelected(requestCode: Int, files: List<DocumentFile>) {
                 val pack = File(cacheDir, "import.pack")
-                files.first().openInputStream(this@MainActivity)?.use { input ->
-                    pack.outputStream().use { output ->
-                        input.copyTo(output)
-                    }
-                }
-                LoadThemeActivity::class.java[this@MainActivity] = {
-                    val uri = FileProvider.getUriForFile(
-                        this@MainActivity,
-                        packageName,
-                        pack
-                    )
-                    action = Intent.ACTION_VIEW
-                    setDataAndType(uri, "application/pack")
-                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                files.first().apply {
+                    if (this.extension == "pack") {
+                        openInputStream(this@MainActivity)?.use { input ->
+                            pack.outputStream().use { output ->
+                                input.copyTo(output)
+                            }
+                        }
+                        LoadThemeActivity::class.java[this@MainActivity] = {
+                            val uri = FileProvider.getUriForFile(
+                                this@MainActivity,
+                                packageName,
+                                pack
+                            )
+                            action = Intent.ACTION_VIEW
+                            setDataAndType(uri, "application/pack")
+                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        }
+                    } else openDialog(
+                        "Invalid Theme-Pack", "Error",
+                        getString(android.R.string.ok),
+                        getString(android.R.string.cancel),
+                        true, null
+                    ) { it.dismiss() }
                 }
             }
         }

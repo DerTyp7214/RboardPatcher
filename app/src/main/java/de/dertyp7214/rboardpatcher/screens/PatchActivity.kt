@@ -2,18 +2,26 @@ package de.dertyp7214.rboardpatcher.screens
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.Button
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.edit
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.anggrayudi.storage.file.forceDelete
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.gson.Gson
 import de.dertyp7214.rboardpatcher.R
 import de.dertyp7214.rboardpatcher.adapter.PatchAdapter
+import de.dertyp7214.rboardpatcher.adapter.PatchInfoIconAdapter
 import de.dertyp7214.rboardpatcher.api.GitHub
 import de.dertyp7214.rboardpatcher.api.types.PatchMeta
 import de.dertyp7214.rboardpatcher.components.BaseActivity
@@ -45,13 +53,57 @@ class PatchActivity : BaseActivity() {
     private val recyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerview) }
     private val adapter by lazy {
         PatchAdapter(this, list, unfiltered, { patchMeta ->
-            openDialog(
-                patchMeta.description ?: "No Description!",
-                "Description",
-                getString(android.R.string.ok),
-                getString(android.R.string.cancel)
-            ) {
-                it.dismiss()
+            openDialog(R.layout.patch_info_popup, true) { dialog ->
+                val list = arrayListOf<Pair<String, Bitmap?>>()
+                val adapter = PatchInfoIconAdapter(this@PatchActivity, list)
+
+                val progressBar = findViewById<CircularProgressIndicator>(R.id.progressBar)
+
+                val okButton = findViewById<Button>(R.id.ok)
+
+                val title = findViewById<TextView>(R.id.title)
+                val message = findViewById<TextView>(R.id.message)
+
+                val fontPreview = findViewById<TextView>(R.id.fontPreview)
+
+                val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+                recyclerView.layoutManager = GridLayoutManager(this@PatchActivity, 1)
+                recyclerView.setHasFixedSize(true)
+                recyclerView.adapter = adapter
+
+                title.text = "Patch Info (${patchMeta.name})"
+                message.text = patchMeta.description ?: "No Description!"
+
+                okButton.setOnClickListener { dialog.dismiss() }
+
+                if (patchMeta.tags.any { it.startsWith("icon", true) }) {
+                    progressBar.visibility = VISIBLE
+                    doAsync({
+                        val path = Patch(patchMeta).getPatches(
+                            this@PatchActivity,
+                            File(context.cacheDir, "preview").also { it.forceDelete(true) }
+                        )
+                        path.listFiles { file -> file.extension == "png" }?.map { file ->
+                            Pair(
+                                file.nameWithoutExtension.removePrefix("icon_"),
+                                file.decodeBitmap()
+                            )
+                        }
+                    }) { pairList ->
+                        progressBar.visibility = GONE
+                        if (pairList != null) {
+                            recyclerView.visibility = VISIBLE
+                            list.clear()
+                            list.addAll(pairList.toList())
+                            (recyclerView.layoutManager as GridLayoutManager).spanCount =
+                                measuredWidth.let { if (it > 0) (it.toFloat() / 80.dp(this@PatchActivity)).roundToInt() else 3 }
+                            adapter.notifyDataSetChanged()
+                        }
+                    }
+                } else if (patchMeta.tags.any { it.startsWith("font", true) }) {
+                    fontPreview.visibility = VISIBLE
+                    fontPreview.typeface = Typeface.create(patchMeta.font, Typeface.NORMAL)
+                }
             }
         }) {
             patchTheme.isEnabled = it.isNotEmpty() && managerInstalled
@@ -66,8 +118,11 @@ class PatchActivity : BaseActivity() {
         }
     private val resultLauncherManager =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            val intent = managerPackageName?.let(packageManager::getLaunchIntentForPackage)
-                ?: Intent(this, MainActivity::class.java)
+            val intent =
+                managerPackageName?.let(packageManager::getLaunchIntentForPackage) ?: Intent(
+                    this,
+                    MainActivity::class.java
+                )
             startActivity(intent)
             finish()
         }
@@ -135,9 +190,7 @@ class PatchActivity : BaseActivity() {
                     list.clear()
                     list.addAll(
                         filterPatches(
-                            unfiltered,
-                            filters,
-                            searchFilter
+                            unfiltered, filters, searchFilter
                         )
                     )
                     adapter.notifyDataChanged()
@@ -150,9 +203,7 @@ class PatchActivity : BaseActivity() {
                     list.clear()
                     list.addAll(
                         filterPatches(
-                            unfiltered,
-                            filters,
-                            searchFilter
+                            unfiltered, filters, searchFilter
                         )
                     )
                     adapter.notifyDataChanged()
@@ -174,8 +225,7 @@ class PatchActivity : BaseActivity() {
                     preselected.patchFiles[patch] ?: listOf()
             }
         }
-        app.patcher.patchTheme(
-            theme,
+        app.patcher.patchTheme(theme,
             toRemove,
             *selected.map { Patch(it) }.toTypedArray(),
             progress = { progress, stage ->
@@ -183,8 +233,7 @@ class PatchActivity : BaseActivity() {
                     patchTheme.text = "Applying: $stage"
                     progressBar.setProgress(progress.roundToInt(), true)
                 }
-            }
-        ) {
+            }) {
             patchTheme.isEnabled = true
             shareTheme.isEnabled = true
             adapter.isEnabled = true
@@ -215,10 +264,7 @@ class PatchActivity : BaseActivity() {
                 ZipHelper().zip(files.map { file -> file.absolutePath }, pack.absolutePath)
 
                 ThemeUtils.shareTheme(
-                    this,
-                    pack,
-                    install,
-                    if (install) resultLauncherManager else resultLauncherMain
+                    this, pack, install, if (install) resultLauncherManager else resultLauncherMain
                 )
                 dialogInterface.dismiss()
             }
@@ -226,14 +272,11 @@ class PatchActivity : BaseActivity() {
     }
 
     private fun filterPatches(
-        unfiltered: List<PatchMeta>,
-        filters: List<String>,
-        searchFilter: String
+        unfiltered: List<PatchMeta>, filters: List<String>, searchFilter: String
     ): List<PatchMeta> {
         return unfiltered.filter { patch ->
             (patch.name.contains(searchFilter, true) || patch.author.contains(
-                searchFilter,
-                true
+                searchFilter, true
             )) && (filters.isEmpty() || patch.tags.any { filters.contains(it) })
         }
     }

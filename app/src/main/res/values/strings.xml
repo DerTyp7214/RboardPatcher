@@ -14,4 +14,6 @@
     <string name="sourceCodeUrl">https://github.com/DerTyp7214/RboardPatcher</string>
     <string name="patchesRepoUrl">https://github.com/GboardThemes/Patches</string>
     <string name="newTag">New</string>
+    <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec laoreet ante quis blandit pellentesque. Sed vulputate arcu ac pharetra iaculis. Nulla massa felis, aliquet in vestibulum vel, tempor condimentum nunc.</string>
+    <string name="fontPreview"><![CDATA[abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 .,:;-_#\'*+\"/=?()&§!ß]]></string>
 </resources>
