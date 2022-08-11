@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.edit
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
@@ -75,6 +76,11 @@ class PatchActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_patch)
+
+        preferences.edit {
+            putLong("previousVisit", preferences.getLong("lastVisit", System.currentTimeMillis()))
+            putLong("lastVisit", System.currentTimeMillis())
+        }
 
         val themeDataClass = intent.getStringExtra("themePath")?.parseThemeDataClass()
 
