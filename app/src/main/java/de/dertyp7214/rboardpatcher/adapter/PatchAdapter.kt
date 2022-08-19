@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
-import de.dertyp7214.colorutilsc.ColorUtilsC
 import de.dertyp7214.rboardpatcher.R
 import de.dertyp7214.rboardpatcher.api.types.PatchMeta
 import de.dertyp7214.rboardpatcher.core.getAttr
@@ -28,10 +27,8 @@ class PatchAdapter(
         setHasStableIds(true)
     }
 
-    private val selectedColor = ColorUtilsC.setAlphaComponent(
-        context.getAttr(com.google.android.material.R.attr.colorOnSecondary),
-        40
-    )
+    private val selectedColor =
+        context.getAttr(com.google.android.material.R.attr.colorSurfaceVariant)
     private val selected = HashMapWrapper(unfiltered) {
         if (isEnabled) onSelect(getSelected())
     }

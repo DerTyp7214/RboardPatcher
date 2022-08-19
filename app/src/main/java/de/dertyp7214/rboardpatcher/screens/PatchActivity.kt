@@ -61,6 +61,7 @@ class PatchActivity : BaseActivity() {
 
                 val okButton = findViewById<Button>(R.id.ok)
 
+                val tags = findViewById<TextView>(R.id.tags)
                 val title = findViewById<TextView>(R.id.title)
                 val message = findViewById<TextView>(R.id.message)
 
@@ -71,8 +72,11 @@ class PatchActivity : BaseActivity() {
                 recyclerView.setHasFixedSize(true)
                 recyclerView.adapter = adapter
 
-                title.text = "Patch Info (${patchMeta.name})"
+                tags.text = patchMeta.tags.joinToString(",")
+                title.text = patchMeta.name
                 message.text = patchMeta.description ?: "No Description!"
+
+                tags.requestFocus()
 
                 okButton.setOnClickListener { dialog.dismiss() }
 

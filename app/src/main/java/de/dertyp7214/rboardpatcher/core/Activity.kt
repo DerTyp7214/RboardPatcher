@@ -2,10 +2,8 @@ package de.dertyp7214.rboardpatcher.core
 
 import android.app.Activity
 import android.content.DialogInterface
-import android.graphics.Color
 import android.graphics.RenderEffect
 import android.graphics.Shader
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.view.View
@@ -28,15 +26,16 @@ inline val Activity.content: View
     }
 
 fun Activity.openUrl(url: String) {
+    val color = getAttr(com.google.android.material.R.attr.colorSurface)
     CustomTabsIntent.Builder()
         .setShowTitle(true)
         .setDefaultColorSchemeParams(
             CustomTabColorSchemeParams
                 .Builder()
-                .setToolbarColor(getAttr(androidx.appcompat.R.attr.colorBackgroundFloating))
-                .setNavigationBarColor(getAttr(androidx.appcompat.R.attr.colorBackgroundFloating))
-                .setSecondaryToolbarColor(getAttr(androidx.appcompat.R.attr.colorBackgroundFloating))
-                .setNavigationBarDividerColor(getAttr(androidx.appcompat.R.attr.colorBackgroundFloating))
+                .setToolbarColor(color)
+                .setNavigationBarColor(color)
+                .setSecondaryToolbarColor(color)
+                .setNavigationBarDividerColor(color)
                 .build()
         )
         .build()
@@ -64,7 +63,6 @@ fun Activity.openDialog(
         }
         .create().also { dialog ->
             block(view, dialog)
-            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             dialog.show()
         }
 }
@@ -103,9 +101,6 @@ fun Activity.openDialog(
             }
         }
         .create().also {
-            it.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            it.findViewById<View>(android.R.id.content)?.background =
-                getDrawable(R.drawable.dialog_background)
             it.show()
         }
 }

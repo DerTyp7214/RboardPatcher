@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
-    app:cardBackgroundColor="?attr/colorBackgroundFloating"
+    app:cardBackgroundColor="?attr/colorSecondaryContainer"
     app:cardCornerRadius="5dp"
     app:cardElevation="0dp"
     app:strokeWidth="0dp">
@@ -24,7 +24,7 @@
             android:layout_height="48dp"
             android:layout_margin="6dp"
             android:padding="8dp"
-            app:tint="?attr/colorOnSecondary"
+            app:tint="?attr/colorOnSecondaryContainer"
             tools:ignore="ContentDescription"
             tools:srcCompat="@drawable/ic_rboard" />
 
@@ -38,7 +38,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="?attr/colorOnSecondary"
+            android:textColor="?attr/colorOnSecondaryContainer"
             tools:text="TextView" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

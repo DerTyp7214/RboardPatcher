@@ -29,7 +29,7 @@
         android:layout_margin="4dp"
         android:ellipsize="end"
         android:gravity="center_horizontal"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
