@@ -22,7 +22,6 @@
         android:layout_marginStart="16dp"
         android:text="@string/app_name"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:textColor="?attr/colorOnSecondary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
@@ -47,7 +46,8 @@
             android:elevation="0dp"
             app:cardBackgroundColor="@android:color/transparent"
             app:cardCornerRadius="8dp"
-            app:cardElevation="0dp">
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -63,7 +63,6 @@
                     android:layout_height="42dp"
                     android:padding="4dp"
                     app:srcCompat="@drawable/ic_github"
-                    app:tint="?attr/colorOnSecondary"
                     tools:ignore="ContentDescription" />
 
                 <TextView
@@ -72,8 +71,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
-                    android:text="@string/sourceCode"
-                    android:textColor="?attr/colorSecondary" />
+                    android:text="@string/sourceCode" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -85,7 +83,8 @@
             android:elevation="0dp"
             app:cardBackgroundColor="@android:color/transparent"
             app:cardCornerRadius="8dp"
-            app:cardElevation="0dp">
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -101,7 +100,6 @@
                     android:layout_height="42dp"
                     android:padding="4dp"
                     app:srcCompat="@drawable/ic_github"
-                    app:tint="?attr/colorOnSecondary"
                     tools:ignore="ContentDescription" />
 
                 <TextView
@@ -110,8 +108,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
-                    android:text="@string/patchesRepo"
-                    android:textColor="?attr/colorSecondary" />
+                    android:text="@string/patchesRepo" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -123,7 +120,8 @@
             android:elevation="0dp"
             app:cardBackgroundColor="@android:color/transparent"
             app:cardCornerRadius="8dp"
-            app:cardElevation="0dp">
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -139,7 +137,6 @@
                     android:layout_height="42dp"
                     android:padding="4dp"
                     app:srcCompat="@drawable/ic_xda"
-                    app:tint="?attr/colorOnSecondary"
                     tools:ignore="ContentDescription" />
 
                 <TextView
@@ -148,8 +145,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
-                    android:text="@string/xdaThread"
-                    android:textColor="?attr/colorSecondary" />
+                    android:text="@string/xdaThread" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>

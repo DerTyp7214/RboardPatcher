@@ -7,7 +7,8 @@
     android:layout_margin="4dp"
     app:cardBackgroundColor="@android:color/transparent"
     app:cardCornerRadius="8dp"
-    app:cardElevation="0dp">
+    app:cardElevation="0dp"
+    app:strokeWidth="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -41,7 +42,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:textColor="?attr/colorOnSecondary"
                 android:textSize="16sp"
                 tools:text="Title" />
 
@@ -50,7 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:textColor="?attr/colorSecondary"
+                android:textColor="?android:attr/textColorLink"
                 android:textSize="13sp"
                 tools:text="Author" />
         </LinearLayout>
