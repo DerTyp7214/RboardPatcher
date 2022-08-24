@@ -39,11 +39,13 @@ android {
 
 dependencies {
     implementation project(':colorutilsc')
+    implementation project(':rboardcomponents')
+
     implementation 'androidx.browser:browser:1.4.0'
     implementation 'com.anggrayudi:storage:1.4.1'
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.5.0'
-    implementation 'com.google.android.material:material:1.7.0-beta01'
+    implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'

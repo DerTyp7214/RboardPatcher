@@ -19,6 +19,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.gson.Gson
+import de.dertyp7214.rboardcomponents.components.SearchBar
 import de.dertyp7214.rboardpatcher.R
 import de.dertyp7214.rboardpatcher.adapter.PatchAdapter
 import de.dertyp7214.rboardpatcher.adapter.PatchInfoIconAdapter
@@ -26,7 +27,6 @@ import de.dertyp7214.rboardpatcher.api.GitHub
 import de.dertyp7214.rboardpatcher.api.types.PatchMeta
 import de.dertyp7214.rboardpatcher.components.BaseActivity
 import de.dertyp7214.rboardpatcher.components.ChipContainer
-import de.dertyp7214.rboardpatcher.components.SearchBar
 import de.dertyp7214.rboardpatcher.core.*
 import de.dertyp7214.rboardpatcher.patcher.Patch
 import de.dertyp7214.rboardpatcher.patcher.Theme

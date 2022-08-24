@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".screens.PatchActivity">
 
-    <de.dertyp7214.rboardpatcher.components.SearchBar
+    <de.dertyp7214.rboardcomponents.components.SearchBar
         android:id="@+id/searchBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
