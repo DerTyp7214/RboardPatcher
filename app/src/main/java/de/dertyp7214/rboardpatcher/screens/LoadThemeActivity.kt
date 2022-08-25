@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import de.dertyp7214.rboardcomponents.utils.ThemeUtils
 import de.dertyp7214.rboardpatcher.R
 import de.dertyp7214.rboardpatcher.adapter.ThemeAdapter
 import de.dertyp7214.rboardpatcher.adapter.types.ThemeDataClass
@@ -27,10 +28,12 @@ class LoadThemeActivity : AppCompatActivity() {
     }
 
     private fun openPatchActivity(themeDataClass: ThemeDataClass) {
-        PatchActivity::class.java[this] = {
-            putExtra("themePath", themeDataClass.path)
+        ThemeUtils.applyTheme(this) { _, _ ->
+            PatchActivity::class.java[this] = {
+                putExtra("themePath", themeDataClass.path)
+            }
+            finish()
         }
-        finish()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
