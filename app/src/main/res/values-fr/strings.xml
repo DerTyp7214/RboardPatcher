@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Patcher RBoard</string>
+    <string name="search">Rechercher</string>
+    <string name="patchTheme">Patcher Thème</string>
+    <string name="share_theme">Partager Thème</string>
+    <string name="addToManager">Ajouter au Gestionnaire</string>
+    <string name="pickTheme">Choisir Thème</string>
+    <string name="name">Nom</string>
+    <string name="author">Autheur</string>
+    <string name="sourceCode">Source code</string>
+    <string name="patchesRepo">Dépôts patches</string>
+    <string name="xdaThread">Fil thread</string>
+    <string name="xdaThreadUrl">https://www.xda-developers.com/rboard-theme-manager-gboard-custom-themes-hidden-settings/</string>
+    <string name="sourceCodeUrl">https://github.com/DerTyp7214/RboardPatcher</string>
+    <string name="patchesRepoUrl">https://github.com/GboardThemes/Patches</string>
+    <string name="newTag">Nouveau</string>
+    <string name="lorem">Le client est très important, le client sera suivi par le client. Avant que quelqu'un ne flatte les enfants. Mais le puissant arc et le carquois ont tiré. Pas de cuisine de masse, de camions sur le porche ou, sauce de saison maintenant.</string>
+    <string name="fontPreview"><![CDATA[abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 .,:;-_#\'*+\"/=?()&§!ß]]></string>
+</resources>
