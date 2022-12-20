@@ -3,14 +3,20 @@ package de.dertyp7214.rboardpatcher.screens
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.edit
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,6 +30,7 @@ import de.dertyp7214.rboardpatcher.R
 import de.dertyp7214.rboardpatcher.adapter.PatchAdapter
 import de.dertyp7214.rboardpatcher.adapter.PatchInfoIconAdapter
 import de.dertyp7214.rboardpatcher.api.GitHub
+import de.dertyp7214.rboardpatcher.api.types.KeyValue
 import de.dertyp7214.rboardpatcher.api.types.PatchMeta
 import de.dertyp7214.rboardpatcher.components.BaseActivity
 import de.dertyp7214.rboardpatcher.components.ChipContainer
@@ -40,7 +47,25 @@ import kotlinx.coroutines.launch
 import java.io.File
 import kotlin.math.roundToInt
 
+@SuppressLint("NotifyDataSetChanged", "SetTextI18n")
 class PatchActivity : BaseActivity() {
+
+    private val mutableLiveBitmap = MutableLiveData<Bitmap>()
+
+    private val imagePickerResultLauncher =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                val bitmap =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
+                    } else {
+                        @Suppress("DEPRECATION")
+                        MediaStore.Images.Media.getBitmap(contentResolver, uri)
+                    }
+
+                mutableLiveBitmap.value = bitmap
+            }
+        }
 
     private val unfiltered = arrayListOf<PatchMeta>()
     private val list = arrayListOf<PatchMeta>()
@@ -109,9 +134,90 @@ class PatchActivity : BaseActivity() {
                     fontPreview.typeface = Typeface.create(patchMeta.font, Typeface.NORMAL)
                 }
             }
-        }) {
-            patchTheme.isEnabled = it.isNotEmpty() && managerInstalled
-            shareTheme.isEnabled = it.isNotEmpty()
+        }) { patches, patchMeta ->
+            patchTheme.isEnabled = patches.isNotEmpty() && managerInstalled
+            shareTheme.isEnabled = patches.isNotEmpty()
+
+            if (
+                patchMeta.tags.any { it.equals("custom", true) }
+                && patchMeta.tags.any { it.equals("image", true) }
+            ) {
+                openDialog(R.layout.custom_image_patch_layout, true) { dialog ->
+                    val title = findViewById<TextView>(R.id.title)
+                    val tags = findViewById<TextView>(R.id.tags)
+                    val message = findViewById<TextView>(R.id.message)
+                    val image = findViewById<ImageView>(R.id.image)
+                    val imageDescription = findViewById<TextView>(R.id.imageDescription)
+
+                    val replaceImageButton = findViewById<MaterialButton>(R.id.replaceImageButton)
+                    val positiveButton = findViewById<Button>(R.id.ok)
+
+                    positiveButton.isEnabled = false
+                    replaceImageButton.isEnabled = false
+
+                    val patch = Patch(patchMeta)
+
+                    replaceImageButton.setOnClickListener {
+                        imagePickerResultLauncher.launch(
+                            PickVisualMediaRequest(
+                                ActivityResultContracts.PickVisualMedia.ImageOnly
+                            )
+                        )
+                    }
+
+                    mutableLiveBitmap.observe(this@PatchActivity) {
+                        if (it != null) {
+                            image.setImageBitmap(it)
+
+                            positiveButton.isEnabled = true
+                        }
+                    }
+
+                    positiveButton.setOnClickListener {
+                        patchMeta.customImage =
+                            mutableLiveBitmap.value?.let {
+                                KeyValue(
+                                    patchMeta.customName ?: "",
+                                    it
+                                )
+                            }
+
+                        dialog.dismiss()
+                    }
+
+                    title.text = patchMeta.name
+                    tags.text = patchMeta.tags.joinToString(",")
+                    message.text = patchMeta.description ?: "No Description!"
+
+                    doAsync({
+                        val path = patch.getPatches(
+                            this@PatchActivity,
+                            File(context.cacheDir, "preview").also { it.forceDelete(true) }
+                        )
+                        path.listFiles { file -> file.extension == "png" }?.map { file ->
+                            Pair(
+                                file.nameWithoutExtension.removePrefix("icon_"),
+                                file.decodeBitmap()
+                            )
+                        }
+                    }) { pairList ->
+                        if (pairList?.size == 1) {
+                            image.setImageBitmap(pairList[0].second)
+                            imageDescription.text = pairList[0].first
+
+                            replaceImageButton.isEnabled = true
+                        } else {
+                            image.visibility = GONE
+                            imageDescription.text = "No Image or more than one Image found!"
+                        }
+                    }
+                }
+            } else if (
+                patchMeta.tags.any { it.equals("custom", true) }
+                && patchMeta.tags.any { it.equals("value", true) }
+            ) {
+                TODO("Implement Custom Value Patch")
+            }
         }
     }
 
@@ -229,6 +335,7 @@ class PatchActivity : BaseActivity() {
                     preselected.patchFiles[patch] ?: listOf()
             }
         }
+
         app.patcher.patchTheme(theme,
             toRemove,
             *selected.map { Patch(it) }.toTypedArray(),

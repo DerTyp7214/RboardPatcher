@@ -3,6 +3,7 @@
 package de.dertyp7214.rboardpatcher.patcher
 
 import android.content.Context
+import android.graphics.Bitmap
 import com.google.gson.GsonBuilder
 import de.dertyp7214.rboardpatcher.core.newId
 import de.dertyp7214.rboardpatcher.patcher.types.FileMap
@@ -47,9 +48,19 @@ class Patcher(private val context: Context) {
             progress((patches.indexOf(patch) + 1f) / patches.size * 100f, patch.patchMeta.name)
             patch.getPatches(context, patcherPath)
                 .listFiles { file -> !file.name.endsWith(".meta") }?.apply {
+                    val customImage = patch.patchMeta.customImage
+                    val customValue = patch.patchMeta.customValue
                     forEach(patchFiles::add)
                     fileMap.patches.add(patch.patchMeta.getSafeName())
-                    fileMap.patchFiles[patch.patchMeta.getSafeName()] = this.map { it.name }
+                    fileMap.patchFiles[patch.patchMeta.getSafeName()] = this.map {
+                        if (it.name == customImage?.first)
+                            customImage?.second?.compress(
+                                Bitmap.CompressFormat.PNG,
+                                100,
+                                it.outputStream()
+                            )
+                        it.name
+                    }
                 }
         }
         val borderCssFiles = arrayListOf<File>()

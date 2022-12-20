@@ -20,7 +20,7 @@ class PatchAdapter(
     private val list: List<PatchMeta>,
     private val unfiltered: List<PatchMeta>,
     private val onLongPress: (PatchMeta) -> Unit = {},
-    private val onSelect: (List<PatchMeta>) -> Unit
+    private val onSelect: (List<PatchMeta>, PatchMeta) -> Unit
 ) : RecyclerView.Adapter<PatchAdapter.ViewHolder>() {
 
     init {
@@ -29,8 +29,8 @@ class PatchAdapter(
 
     private val selectedColor =
         context.getAttr(com.google.android.material.R.attr.colorSurfaceVariant)
-    private val selected = HashMapWrapper(unfiltered) {
-        if (isEnabled) onSelect(getSelected())
+    private val selected = HashMapWrapper(unfiltered) { _, item ->
+        if (isEnabled) onSelect(getSelected(), item)
     }
 
     private val previousVisit =
@@ -109,11 +109,11 @@ class PatchAdapter(
 
     private class HashMapWrapper(
         private val map: HashMap<PatchMeta, Boolean>,
-        private val onSet: (items: HashMap<PatchMeta, Boolean>) -> Unit
+        private val onSet: (items: HashMap<PatchMeta, Boolean>, PatchMeta) -> Unit
     ) {
         constructor(
             map: List<PatchMeta>,
-            onSet: (items: HashMap<PatchMeta, Boolean>) -> Unit
+            onSet: (items: HashMap<PatchMeta, Boolean>, PatchMeta) -> Unit
         ) : this(
             HashMap(map.associateWith { false }),
             onSet
@@ -129,7 +129,6 @@ class PatchAdapter(
         fun <A, B> map(transform: (Map.Entry<PatchMeta, Boolean>) -> Pair<A, B>) =
             map.map(transform).toMap()
 
-        @Suppress("UNCHECKED_CAST")
         operator fun get(index: PatchMeta) = try {
             map[index] ?: false
         } catch (_: Exception) {
@@ -139,7 +138,7 @@ class PatchAdapter(
         fun set(index: PatchMeta, e: Boolean, internal: Boolean) {
             try {
                 map[index] = e
-                if (!internal) onSet(map)
+                if (!internal) onSet(map, index)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
