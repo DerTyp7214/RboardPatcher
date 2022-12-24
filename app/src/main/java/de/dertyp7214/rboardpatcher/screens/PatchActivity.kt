@@ -134,15 +134,19 @@ class PatchActivity : BaseActivity() {
                     fontPreview.typeface = Typeface.create(patchMeta.font, Typeface.NORMAL)
                 }
             }
-        }) { patches, patchMeta ->
+        }) { patches, patchMeta, selected ->
             patchTheme.isEnabled = patches.isNotEmpty() && managerInstalled
             shareTheme.isEnabled = patches.isNotEmpty()
+
+            if (!selected) return@PatchAdapter
 
             if (
                 patchMeta.tags.any { it.equals("custom", true) }
                 && patchMeta.tags.any { it.equals("image", true) }
             ) {
-                openDialog(R.layout.custom_image_patch_layout, true) { dialog ->
+                openDialog(R.layout.custom_image_patch_layout, true, {
+                    unselect(patchMeta.name)
+                }) { dialog ->
                     val title = findViewById<TextView>(R.id.title)
                     val tags = findViewById<TextView>(R.id.tags)
                     val message = findViewById<TextView>(R.id.message)
@@ -157,20 +161,22 @@ class PatchActivity : BaseActivity() {
 
                     val patch = Patch(patchMeta)
 
+                    val observer = Observe { bitmap ->
+                        if (bitmap != null) {
+                            mutableLiveBitmap.removeObserver(this)
+                            image.setImageBitmap(bitmap)
+
+                            positiveButton.isEnabled = true
+                        }
+                    }
+
                     replaceImageButton.setOnClickListener {
+                        mutableLiveBitmap.observe(this@PatchActivity, observer)
                         imagePickerResultLauncher.launch(
                             PickVisualMediaRequest(
                                 ActivityResultContracts.PickVisualMedia.ImageOnly
                             )
                         )
-                    }
-
-                    mutableLiveBitmap.observe(this@PatchActivity) {
-                        if (it != null) {
-                            image.setImageBitmap(it)
-
-                            positiveButton.isEnabled = true
-                        }
                     }
 
                     positiveButton.setOnClickListener {

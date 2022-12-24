@@ -20,7 +20,7 @@ class PatchAdapter(
     private val list: List<PatchMeta>,
     private val unfiltered: List<PatchMeta>,
     private val onLongPress: (PatchMeta) -> Unit = {},
-    private val onSelect: (List<PatchMeta>, PatchMeta) -> Unit
+    private val onSelect: PatchAdapter.(List<PatchMeta>, PatchMeta, selected: Boolean) -> Unit
 ) : RecyclerView.Adapter<PatchAdapter.ViewHolder>() {
 
     init {
@@ -29,8 +29,8 @@ class PatchAdapter(
 
     private val selectedColor =
         context.getAttr(com.google.android.material.R.attr.colorSurfaceVariant)
-    private val selected = HashMapWrapper(unfiltered) { _, item ->
-        if (isEnabled) onSelect(getSelected(), item)
+    private val selected = HashMapWrapper(unfiltered) { _, item, selected ->
+        if (isEnabled) onSelect(getSelected(), item, selected)
     }
 
     private val previousVisit =
@@ -51,10 +51,21 @@ class PatchAdapter(
         }
     }
 
+    fun select(vararg name: String) = select(name.toList())
+
     fun select(list: List<String>) {
         val tmp = selected.map { Pair(it.key.getSafeName(), it.key) }
         list.forEach { patchName ->
             tmp[patchName]?.let { selected.set(it, true, internal = true) }
+        }
+    }
+
+    fun unselect(vararg name: String) = unselect(name.toList())
+
+    fun unselect(list: List<String>) {
+        val tmp = selected.map { Pair(it.key.getSafeName(), it.key) }
+        list.forEach { patchName ->
+            tmp[patchName]?.let { selected.set(it, false, internal = true) }
         }
     }
 
@@ -109,11 +120,11 @@ class PatchAdapter(
 
     private class HashMapWrapper(
         private val map: HashMap<PatchMeta, Boolean>,
-        private val onSet: (items: HashMap<PatchMeta, Boolean>, PatchMeta) -> Unit
+        private val onSet: (items: HashMap<PatchMeta, Boolean>, PatchMeta, selected: Boolean) -> Unit
     ) {
         constructor(
             map: List<PatchMeta>,
-            onSet: (items: HashMap<PatchMeta, Boolean>, PatchMeta) -> Unit
+            onSet: (items: HashMap<PatchMeta, Boolean>, PatchMeta, selected: Boolean) -> Unit
         ) : this(
             HashMap(map.associateWith { false }),
             onSet
@@ -138,7 +149,7 @@ class PatchAdapter(
         fun set(index: PatchMeta, e: Boolean, internal: Boolean) {
             try {
                 map[index] = e
-                if (!internal) onSet(map, index)
+                if (!internal) onSet(map, index, e)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
