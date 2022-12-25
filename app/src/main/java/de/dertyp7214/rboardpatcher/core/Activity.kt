@@ -45,6 +45,7 @@ fun Activity.openUrl(url: String) {
 fun Activity.openDialog(
     @LayoutRes layout: Int,
     cancelable: Boolean = true,
+    onCancel: (DialogInterface) -> Unit = {},
     block: View.(DialogInterface) -> Unit
 ): AlertDialog {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) content.setRenderEffect(
@@ -58,6 +59,9 @@ fun Activity.openDialog(
     return MaterialAlertDialogBuilder(this)
         .setCancelable(cancelable)
         .setView(view)
+        .setOnCancelListener {
+            onCancel(it)
+        }
         .setOnDismissListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) content.setRenderEffect(null)
         }
