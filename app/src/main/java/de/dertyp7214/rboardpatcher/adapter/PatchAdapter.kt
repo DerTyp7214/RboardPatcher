@@ -7,6 +7,7 @@ import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
@@ -51,21 +52,29 @@ class PatchAdapter(
         }
     }
 
-    fun select(vararg name: String) = select(name.toList())
+    fun select(vararg name: String, internal: Boolean = true) = select(name.toList(), internal)
 
-    fun select(list: List<String>) {
+    @SuppressLint("NotifyDataSetChanged")
+    fun select(list: List<String>, internal: Boolean = true) {
         val tmp = selected.map { Pair(it.key.getSafeName(), it.key) }
         list.forEach { patchName ->
-            tmp[patchName]?.let { selected.set(it, true, internal = true) }
+            tmp[patchName]?.let {
+                selected.set(it, true, internal)
+                if (!internal) notifyItemChanged(this@PatchAdapter.list.indexOf(it))
+            }
         }
     }
 
-    fun unselect(vararg name: String) = unselect(name.toList())
+    fun unselect(vararg name: String, internal: Boolean = true) = unselect(name.toList(), internal)
 
-    fun unselect(list: List<String>) {
+    @SuppressLint("NotifyDataSetChanged")
+    fun unselect(list: List<String>, internal: Boolean = true) {
         val tmp = selected.map { Pair(it.key.getSafeName(), it.key) }
         list.forEach { patchName ->
-            tmp[patchName]?.let { selected.set(it, false, internal = true) }
+            tmp[patchName]?.let {
+                selected.set(it, false, internal)
+                if (!internal) notifyItemChanged(this@PatchAdapter.list.indexOf(it))
+            }
         }
     }
 
@@ -80,6 +89,7 @@ class PatchAdapter(
         val title: TextView = v.findViewById(R.id.title)
         val author: TextView = v.findViewById(R.id.author)
         val newTag: TextView = v.findViewById(R.id.newTag)
+        val image: ImageView = v.findViewById(R.id.imageView)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -100,6 +110,8 @@ class PatchAdapter(
         holder.author.text = patchMeta.author
 
         holder.newTag.visibility = if (patchMeta.date > previousVisit) View.VISIBLE else View.GONE
+
+        holder.image.setImageResource(if (patchMeta.customName != null) R.drawable.ic_patch_filled else R.drawable.ic_patch)
 
         holder.root.setOnLongClickListener {
             onLongPress(patchMeta)
@@ -126,8 +138,7 @@ class PatchAdapter(
             map: List<PatchMeta>,
             onSet: (items: HashMap<PatchMeta, Boolean>, PatchMeta, selected: Boolean) -> Unit
         ) : this(
-            HashMap(map.associateWith { false }),
-            onSet
+            HashMap(map.associateWith { false }), onSet
         )
 
         fun setItems(map: List<PatchMeta>) {

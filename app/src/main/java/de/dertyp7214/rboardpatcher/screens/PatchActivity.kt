@@ -8,9 +8,12 @@ import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.PickVisualMediaRequest
@@ -50,7 +53,7 @@ import kotlin.math.roundToInt
 @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
 class PatchActivity : BaseActivity() {
 
-    private val mutableLiveBitmap = MutableLiveData<Bitmap>()
+    private val mutableLiveBitmap = MutableLiveData<Bitmap?>()
 
     private val imagePickerResultLauncher =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -144,9 +147,7 @@ class PatchActivity : BaseActivity() {
                 patchMeta.tags.any { it.equals("custom", true) }
                 && patchMeta.tags.any { it.equals("image", true) }
             ) {
-                openDialog(R.layout.custom_image_patch_layout, true, {
-                    unselect(patchMeta.name)
-                }) { dialog ->
+                openDialog(R.layout.custom_image_patch_layout, false) { dialog ->
                     val title = findViewById<TextView>(R.id.title)
                     val tags = findViewById<TextView>(R.id.tags)
                     val message = findViewById<TextView>(R.id.message)
@@ -156,17 +157,18 @@ class PatchActivity : BaseActivity() {
                     val replaceImageButton = findViewById<MaterialButton>(R.id.replaceImageButton)
                     val positiveButton = findViewById<Button>(R.id.ok)
 
-                    positiveButton.isEnabled = false
                     replaceImageButton.isEnabled = false
 
                     val patch = Patch(patchMeta)
 
+                    var customImage: Bitmap? = null
+
                     val observer = Observe { bitmap ->
                         if (bitmap != null) {
+                            mutableLiveBitmap.value = null
                             mutableLiveBitmap.removeObserver(this)
                             image.setImageBitmap(bitmap)
-
-                            positiveButton.isEnabled = true
+                            customImage = bitmap
                         }
                     }
 
@@ -180,13 +182,9 @@ class PatchActivity : BaseActivity() {
                     }
 
                     positiveButton.setOnClickListener {
-                        patchMeta.customImage =
-                            mutableLiveBitmap.value?.let {
-                                KeyValue(
-                                    patchMeta.customName ?: "",
-                                    it
-                                )
-                            }
+                        patchMeta.customImage = customImage?.let {
+                            KeyValue(patchMeta.customName ?: "", it)
+                        }
 
                         dialog.dismiss()
                     }
@@ -222,7 +220,49 @@ class PatchActivity : BaseActivity() {
                 patchMeta.tags.any { it.equals("custom", true) }
                 && patchMeta.tags.any { it.equals("value", true) }
             ) {
-                TODO("Implement Custom Value Patch")
+                openDialog(R.layout.custom_value_patch_layout, false) { dialog ->
+                    val title = findViewById<TextView>(R.id.title)
+                    val tags = findViewById<TextView>(R.id.tags)
+                    val message = findViewById<TextView>(R.id.message)
+                    val patchValue = findViewById<EditText>(R.id.patchValue)
+                    val positiveButton = findViewById<Button>(R.id.ok)
+
+                    positiveButton.isEnabled = false
+
+                    patchValue.addTextChangedListener(object : TextWatcher {
+                        override fun afterTextChanged(s: Editable?) {
+                            positiveButton.isEnabled = s?.isNotEmpty() == true
+                        }
+
+                        override fun beforeTextChanged(
+                            s: CharSequence?,
+                            start: Int,
+                            count: Int,
+                            after: Int
+                        ) {
+                        }
+
+                        override fun onTextChanged(
+                            s: CharSequence?,
+                            start: Int,
+                            before: Int,
+                            count: Int
+                        ) {
+                        }
+                    })
+
+                    positiveButton.setOnClickListener {
+                        patchMeta.customValue = patchMeta.customName?.let { s ->
+                            KeyValue(s, patchValue.text.toString())
+                        }
+
+                        dialog.dismiss()
+                    }
+
+                    title.text = patchMeta.name
+                    tags.text = patchMeta.tags.joinToString(",")
+                    message.text = patchMeta.description ?: "No Description!"
+                }
             }
         }
     }
@@ -273,9 +313,14 @@ class PatchActivity : BaseActivity() {
             }) { (patches, theme, filesMap) ->
                 unfiltered.clear()
                 unfiltered.addAll(patches.sortedWith { a, b ->
-                    if (a.date > lastVisit && b.date > lastVisit) a.name.compareTo(b.name, true)
+                    if (a.date > lastVisit && b.date > lastVisit) a.name.compareTo(
+                        b.name,
+                        true
+                    )
                     else if (a.date > lastVisit) -1
                     else if (b.date > lastVisit) 1
+                    else if (a.tags.contains("custom") && !b.tags.contains("custom")) -1
+                    else if (!a.tags.contains("custom") && b.tags.contains("custom")) 1
                     else a.name.compareTo(b.name, true)
                 })
                 list.clear()
