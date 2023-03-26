@@ -3,6 +3,7 @@
 package de.dertyp7214.rboardpatcher.patcher
 
 import android.content.Context
+import android.graphics.Bitmap
 import com.google.gson.GsonBuilder
 import de.dertyp7214.rboardpatcher.core.newId
 import de.dertyp7214.rboardpatcher.patcher.types.FileMap
@@ -43,14 +44,33 @@ class Patcher(private val context: Context) {
     ): Pair<File, File?> {
         val patchFiles = arrayListOf<File>()
         val fileMap = FileMap(arrayListOf(), hashMapOf())
+        val customValuesCss = StringBuilder()
         patches.forEach { patch ->
+            val customValue = patch.patchMeta.customValue
             progress((patches.indexOf(patch) + 1f) / patches.size * 100f, patch.patchMeta.name)
+
+            if (customValue != null) customValuesCss.appendLine("@def ${customValue.first} ${customValue.second};")
+
             patch.getPatches(context, patcherPath)
                 .listFiles { file -> !file.name.endsWith(".meta") }?.apply {
+                    val customImage = patch.patchMeta.customImage
                     forEach(patchFiles::add)
                     fileMap.patches.add(patch.patchMeta.getSafeName())
-                    fileMap.patchFiles[patch.patchMeta.getSafeName()] = this.map { it.name }
+                    fileMap.patchFiles[patch.patchMeta.getSafeName()] = this.map {
+                        if (it.name == customImage?.first)
+                            customImage?.second?.compress(
+                                Bitmap.CompressFormat.PNG,
+                                100,
+                                it.outputStream()
+                            )
+                        it.name
+                    }
                 }
+        }
+        if (customValuesCss.isNotEmpty()) {
+            val customValuesFile = File(patcherPath, "custom_values.css")
+            customValuesFile.writeText(customValuesCss.toString())
+            patchFiles.add(customValuesFile)
         }
         val borderCssFiles = arrayListOf<File>()
         val cssFiles = patchFiles.filter { it.name.endsWith(".css") }.filterNot {

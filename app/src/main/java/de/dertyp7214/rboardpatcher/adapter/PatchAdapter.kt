@@ -7,6 +7,7 @@ import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
@@ -20,7 +21,7 @@ class PatchAdapter(
     private val list: List<PatchMeta>,
     private val unfiltered: List<PatchMeta>,
     private val onLongPress: (PatchMeta) -> Unit = {},
-    private val onSelect: (List<PatchMeta>) -> Unit
+    private val onSelect: PatchAdapter.(List<PatchMeta>, PatchMeta, selected: Boolean) -> Unit
 ) : RecyclerView.Adapter<PatchAdapter.ViewHolder>() {
 
     init {
@@ -29,8 +30,8 @@ class PatchAdapter(
 
     private val selectedColor =
         context.getAttr(com.google.android.material.R.attr.colorSurfaceVariant)
-    private val selected = HashMapWrapper(unfiltered) {
-        if (isEnabled) onSelect(getSelected())
+    private val selected = HashMapWrapper(unfiltered) { _, item, selected ->
+        if (isEnabled) onSelect(getSelected(), item, selected)
     }
 
     private val previousVisit =
@@ -51,10 +52,29 @@ class PatchAdapter(
         }
     }
 
-    fun select(list: List<String>) {
+    fun select(vararg name: String, internal: Boolean = true) = select(name.toList(), internal)
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun select(list: List<String>, internal: Boolean = true) {
         val tmp = selected.map { Pair(it.key.getSafeName(), it.key) }
         list.forEach { patchName ->
-            tmp[patchName]?.let { selected.set(it, true, internal = true) }
+            tmp[patchName]?.let {
+                selected.set(it, true, internal)
+                if (!internal) notifyItemChanged(this@PatchAdapter.list.indexOf(it))
+            }
+        }
+    }
+
+    fun unselect(vararg name: String, internal: Boolean = true) = unselect(name.toList(), internal)
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun unselect(list: List<String>, internal: Boolean = true) {
+        val tmp = selected.map { Pair(it.key.getSafeName(), it.key) }
+        list.forEach { patchName ->
+            tmp[patchName]?.let {
+                selected.set(it, false, internal)
+                if (!internal) notifyItemChanged(this@PatchAdapter.list.indexOf(it))
+            }
         }
     }
 
@@ -69,6 +89,7 @@ class PatchAdapter(
         val title: TextView = v.findViewById(R.id.title)
         val author: TextView = v.findViewById(R.id.author)
         val newTag: TextView = v.findViewById(R.id.newTag)
+        val image: ImageView = v.findViewById(R.id.imageView)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -90,6 +111,8 @@ class PatchAdapter(
 
         holder.newTag.visibility = if (patchMeta.date > previousVisit) View.VISIBLE else View.GONE
 
+        holder.image.setImageResource(if (patchMeta.customName != null) R.drawable.ic_patch_filled else R.drawable.ic_patch)
+
         holder.root.setOnLongClickListener {
             onLongPress(patchMeta)
             true
@@ -109,14 +132,13 @@ class PatchAdapter(
 
     private class HashMapWrapper(
         private val map: HashMap<PatchMeta, Boolean>,
-        private val onSet: (items: HashMap<PatchMeta, Boolean>) -> Unit
+        private val onSet: (items: HashMap<PatchMeta, Boolean>, PatchMeta, selected: Boolean) -> Unit
     ) {
         constructor(
             map: List<PatchMeta>,
-            onSet: (items: HashMap<PatchMeta, Boolean>) -> Unit
+            onSet: (items: HashMap<PatchMeta, Boolean>, PatchMeta, selected: Boolean) -> Unit
         ) : this(
-            HashMap(map.associateWith { false }),
-            onSet
+            HashMap(map.associateWith { false }), onSet
         )
 
         fun setItems(map: List<PatchMeta>) {
@@ -129,7 +151,6 @@ class PatchAdapter(
         fun <A, B> map(transform: (Map.Entry<PatchMeta, Boolean>) -> Pair<A, B>) =
             map.map(transform).toMap()
 
-        @Suppress("UNCHECKED_CAST")
         operator fun get(index: PatchMeta) = try {
             map[index] ?: false
         } catch (_: Exception) {
@@ -139,7 +160,7 @@ class PatchAdapter(
         fun set(index: PatchMeta, e: Boolean, internal: Boolean) {
             try {
                 map[index] = e
-                if (!internal) onSet(map)
+                if (!internal) onSet(map, index, e)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
