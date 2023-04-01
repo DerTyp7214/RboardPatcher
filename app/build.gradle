@@ -16,8 +16,8 @@ android {
         applicationId "de.dertyp7214.rboardpatcher"
         minSdk 26
         targetSdk 33
-        versionCode 2400
-        versionName "2.4"
+        versionCode 2500
+        versionName "2.5"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -45,17 +45,17 @@ dependencies {
     implementation project(':colorutilsc')
     implementation project(':rboardcomponents')
 
-    implementation 'androidx.browser:browser:1.4.0'
-    implementation 'com.anggrayudi:storage:1.5.2'
+    implementation 'androidx.browser:browser:1.5.0'
+    implementation 'com.anggrayudi:storage:1.5.4'
     implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'com.google.android.material:material:1.8.0-beta01'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0-beta01'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.8.0-RC'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.8.20'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
-    implementation 'com.google.code.gson:gson:2.10'
+    implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'androidx.preference:preference-ktx:1.2.0'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
