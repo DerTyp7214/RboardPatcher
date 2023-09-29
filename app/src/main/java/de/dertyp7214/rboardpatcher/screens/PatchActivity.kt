@@ -393,7 +393,11 @@ class PatchActivity : BaseActivity() {
             progress = { progress, stage ->
                 CoroutineScope(Dispatchers.Main).launch {
                     patchTheme.text = "Applying: $stage"
-                    progressBar.setProgress(progress.roundToInt(), true)
+                    if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
+                        progressBar.setProgress(progress.roundToInt(), true)
+                    } else{
+                        progressBar.progress = progress.roundToInt()
+                    }
                 }
             }) {
             patchTheme.isEnabled = true
