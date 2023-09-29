@@ -9,7 +9,7 @@ espressoCore = "3.5.1"
 gradle = "8.3.0-alpha06"
 gson = "2.10.1"
 junit = "4.13.2"
-kotlin-reflect = "1.9.10"
+kotlinreflect = "1.9.10"
 kotlinStdlib = "1.9.10"
 kotlinxCoroutinesAndroid = "1.7.3"
 kspPlugin = "1.9.10-1.0.13"
@@ -28,6 +28,8 @@ ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-junit"
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { module = "junit:junit", version.ref = "junit" }
+androidx_junit = { module = "androidx.test.ext:junit", version.ref = "junit" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect ", version.ref = "kotlinreflect" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlinStdlib" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
