@@ -8,7 +8,12 @@ fun isPackageInstalled(packageName: String, packageManager: PackageManager): Boo
     return try {
         if (Build.VERSION.SDK_INT >= 33)
             packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0L))
-        else packageManager.getPackageInfo(packageName, 0)
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            packageManager.getPackageInfo(packageName, 0).longVersionCode
+        } else {
+            packageManager.getPackageInfo(packageName, 0).versionCode.toLong()
+
+        }
         true
     } catch (e: PackageManager.NameNotFoundException) {
         false
