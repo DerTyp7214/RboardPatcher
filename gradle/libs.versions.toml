@@ -16,6 +16,7 @@ kspPlugin = "1.9.10-1.0.13"
 material = "1.10.0"
 preferenceKtx = "1.2.1"
 storage = "1.5.5"
+kotlin = "1.9.10"
 
 [libraries]
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -38,4 +39,5 @@ storage = { module = "com.anggrayudi:storage", version.ref = "storage" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "kspPlugin" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 

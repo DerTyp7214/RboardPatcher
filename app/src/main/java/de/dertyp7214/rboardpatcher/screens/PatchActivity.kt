@@ -16,6 +16,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.edit
@@ -29,6 +30,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.gson.Gson
 import de.dertyp7214.rboardcomponents.components.SearchBar
+import de.dertyp7214.rboardpatcher.Application
 import de.dertyp7214.rboardpatcher.R
 import de.dertyp7214.rboardpatcher.adapter.PatchAdapter
 import de.dertyp7214.rboardpatcher.adapter.PatchInfoIconAdapter
@@ -37,7 +39,16 @@ import de.dertyp7214.rboardpatcher.api.types.KeyValue
 import de.dertyp7214.rboardpatcher.api.types.PatchMeta
 import de.dertyp7214.rboardpatcher.components.BaseActivity
 import de.dertyp7214.rboardpatcher.components.ChipContainer
-import de.dertyp7214.rboardpatcher.core.*
+import de.dertyp7214.rboardpatcher.core.Observe
+import de.dertyp7214.rboardpatcher.core.app
+import de.dertyp7214.rboardpatcher.core.decodeBitmap
+import de.dertyp7214.rboardpatcher.core.dp
+import de.dertyp7214.rboardpatcher.core.get
+import de.dertyp7214.rboardpatcher.core.openDialog
+import de.dertyp7214.rboardpatcher.core.openShareThemeDialog
+import de.dertyp7214.rboardpatcher.core.parseThemeDataClass
+import de.dertyp7214.rboardpatcher.core.preferences
+import de.dertyp7214.rboardpatcher.core.toRboardTheme
 import de.dertyp7214.rboardpatcher.patcher.Patch
 import de.dertyp7214.rboardpatcher.patcher.Theme
 import de.dertyp7214.rboardpatcher.patcher.types.FileMap
@@ -48,6 +59,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.collections.set
 import kotlin.math.roundToInt
 
 @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
@@ -393,9 +405,9 @@ class PatchActivity : BaseActivity() {
             progress = { progress, stage ->
                 CoroutineScope(Dispatchers.Main).launch {
                     patchTheme.text = "Applying: $stage"
-                    if(Build.VERSION.SDK_INT > Build.VERSION_CODES.N){
+                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
                         progressBar.setProgress(progress.roundToInt(), true)
-                    } else{
+                    } else {
                         progressBar.progress = progress.roundToInt()
                     }
                 }
@@ -421,17 +433,41 @@ class PatchActivity : BaseActivity() {
                 val files = arrayListOf(themeFile)
                 it.second?.let { files.add(imageFile) }
 
-                File(themeFile.parentFile, "pack.meta").apply {
-                    files.add(this)
-                    writeText("name=$name\nauthor=$author\n")
+                if (install && Application.rboardService != null) {
+                    val result = Application.rboardService?.installRboardTheme(
+                        themeFile.absolutePath.parseThemeDataClass().toRboardTheme()
+                    )
+
+                    if (result == true) {
+                        Toast.makeText(
+                            this@PatchActivity,
+                            getString(R.string.theme_installed),
+                            Toast.LENGTH_LONG
+                        ).show()
+                        finish()
+                    } else {
+                        Toast.makeText(
+                            this@PatchActivity,
+                            getString(R.string.theme_install_failed),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                } else {
+                    File(themeFile.parentFile, "pack.meta").apply {
+                        files.add(this)
+                        writeText("name=$name\nauthor=$author\n")
+                    }
+
+                    val pack = File(themeFile.parentFile, "pack.pack")
+                    ZipHelper().zip(files.map { file -> file.absolutePath }, pack.absolutePath)
+
+                    ThemeUtils.shareTheme(
+                        this,
+                        pack,
+                        install,
+                        if (install) resultLauncherManager else resultLauncherMain
+                    )
                 }
-
-                val pack = File(themeFile.parentFile, "pack.pack")
-                ZipHelper().zip(files.map { file -> file.absolutePath }, pack.absolutePath)
-
-                ThemeUtils.shareTheme(
-                    this, pack, install, if (install) resultLauncherManager else resultLauncherMain
-                )
                 dialogInterface.dismiss()
             }
         }

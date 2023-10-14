@@ -18,8 +18,8 @@ android {
         applicationId = "de.dertyp7214.rboardpatcher"
         minSdk = 23
         targetSdk = 34
-        versionCode = 2700
-        versionName = "2.7"
+        versionCode = 2800
+        versionName = "2.8"
 
         testInstrumentationRunner  = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -79,8 +79,5 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.gson)
     implementation(libs.preference.ktx)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
     coreLibraryDesugaring(libs.desugar.jdk.libs.nio)
 }

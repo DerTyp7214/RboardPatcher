@@ -20,6 +20,9 @@
         android:theme="@style/Theme.RboardPatcher"
         tools:targetApi="31">
         <activity
+            android:name=".screens.PickThemeActivity"
+            android:exported="false" />
+        <activity
             android:name=".screens.PatchActivity"
             android:exported="false">
             <meta-data
@@ -76,6 +79,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
 
         <provider
             android:name="androidx.core.content.FileProvider"
