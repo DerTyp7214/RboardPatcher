@@ -7,7 +7,7 @@ import android.graphics.Bitmap
 import com.google.gson.GsonBuilder
 import de.dertyp7214.rboardpatcher.core.newId
 import de.dertyp7214.rboardpatcher.patcher.types.FileMap
-import de.dertyp7214.rboardpatcher.patcher.types.ThemeMetadata
+import de.dertyp7214.rboard.ThemeMetadata
 import de.dertyp7214.rboardpatcher.utils.ZipHelper
 import de.dertyp7214.rboardpatcher.utils.doAsync
 import java.io.File

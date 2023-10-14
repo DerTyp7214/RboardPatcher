@@ -28,10 +28,6 @@ class Application : android.app.Application() {
 
         RboardUtils.getRboardService(this) {
             rboardService = it
-
-            Log.d("RBOARD", "Rboard service connected")
-            Log.d("RBOARD", "Rboard service version: ${it.aidlVersion}")
-            Log.d("RBOARD", "Rboard service themes: ${it.rboardThemes.contentToString()}")
         }
 
         ColorUtilsC.init()

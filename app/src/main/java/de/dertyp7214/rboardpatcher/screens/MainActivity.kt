@@ -41,6 +41,11 @@ class MainActivity : BaseActivity() {
             } else add(MainOption(R.drawable.ic_xda, "Open XDA") {
                 openUrl(getString(R.string.xdaThreadUrl))
             })
+            add(MainOption(R.drawable.ic_rboard, "Pick installed Theme") {
+                PickThemeActivity::class.java[this@MainActivity] = {
+                    action = Intent.ACTION_VIEW
+                }
+            })
             add(MainOption(R.drawable.ic_folder, "Open theme from file manager") {
                 storage.openFilePicker(allowMultiple = false)
             })
