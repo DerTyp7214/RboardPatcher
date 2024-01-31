@@ -18,8 +18,8 @@ android {
         applicationId = "de.dertyp7214.rboardpatcher"
         minSdk = 23
         targetSdk = 34
-        versionCode = 3100
-        versionName = "3.1"
+        versionCode = 3200
+        versionName = "3.2"
 
         testInstrumentationRunner  = "androidx.test.runner.AndroidJUnitRunner"
     }
