@@ -23,7 +23,7 @@ jobs:
 
       - uses: nttld/setup-ndk@v1
         with:
-          ndk-version: r26b
+          ndk-version: r26c
 
       - name: Setup JDK
         uses: actions/setup-java@v4
@@ -58,7 +58,7 @@ jobs:
 
       - name: Build Bundle
         id: buildBundle
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: wrapper
           arguments: bundleRelease
@@ -73,10 +73,10 @@ jobs:
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
-          BUILD_TOOLS_VERSION: 34.0.0
+          BUILD_TOOLS_VERSION: 35.0.0-rc1
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Artifact
           path: app/build/outputs/bundle/release/app-release.aab
