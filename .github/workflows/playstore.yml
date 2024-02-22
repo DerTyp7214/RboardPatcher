@@ -76,7 +76,7 @@ jobs:
           BUILD_TOOLS_VERSION: 35.0.0-rc1
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.3.1
         with:
           name: Artifact
           path: app/build/outputs/bundle/release/app-release.aab
