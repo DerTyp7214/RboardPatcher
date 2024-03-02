@@ -9,7 +9,7 @@
     <string name="author">Author</string>
     <string name="sourceCode">Source code</string>
     <string name="patchesRepo">Patches repo</string>
-    <string name="xdaThread">Xda thread</string>
+    <string name="xdaThread">XDA Forums</string>
     <string name="xdaThreadUrl">https://www.xda-developers.com/rboard-theme-manager-gboard-custom-themes-hidden-settings/</string>
     <string name="sourceCodeUrl">https://github.com/DerTyp7214/RboardPatcher</string>
     <string name="patchesRepoUrl">https://github.com/GboardThemes/Patches</string>
