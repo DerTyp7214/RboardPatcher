@@ -1,22 +1,22 @@
 [versions]
 androidx-junit = "1.1.5"
-appcompat = "1.6.1"
-browser = "1.7.0"
+appcompat = "1.7.0-alpha03"
+browser = "1.8.0"
 constraintlayout = "2.1.4"
-coreKtx = "1.12.0"
+coreKtx = "1.13.0-rc01"
 desugar_jdk_libs_nio = "2.0.4"
-espressoCore = "3.5.1"
-gradle = "8.4.0-alpha10"
+espressoCore = "3.6.0-alpha03"
+gradle = "8.5.0-alpha05"
 gson = "2.10.1"
 junit = "4.13.2"
-kotlinreflect = "1.9.22"
-kotlinStdlib = "1.9.22"
+kotlinreflect = "1.9.23"
+kotlinStdlib = "1.9.23"
 kotlinxCoroutinesAndroid = "1.8.0"
-kspPlugin = "1.9.22-1.0.17"
+kspPlugin = "1.9.23-1.0.20"
 material = "1.11.0"
 preferenceKtx = "1.2.1"
 storage = "1.5.5"
-kotlin = "1.9.22"
+kotlin = "1.9.23"
 
 [libraries]
 appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -29,7 +29,6 @@ ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-junit"
 gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { module = "junit:junit", version.ref = "junit" }
-androidx_junit = { module = "androidx.test.ext:junit", version.ref = "junit" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect ", version.ref = "kotlinreflect" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlinStdlib" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }

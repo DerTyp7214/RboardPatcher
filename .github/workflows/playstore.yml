@@ -23,7 +23,7 @@ jobs:
 
       - uses: nttld/setup-ndk@v1
         with:
-          ndk-version: r26c
+          ndk-version: r26d
 
       - name: Setup JDK
         uses: actions/setup-java@v4
@@ -73,10 +73,10 @@ jobs:
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
-          BUILD_TOOLS_VERSION: 35.0.0-rc1
+          BUILD_TOOLS_VERSION: 35.0.0-rc3
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4.3.1
+        uses: actions/upload-artifact@v4
         with:
           name: Artifact
           path: app/build/outputs/bundle/release/app-release.aab

@@ -10,7 +10,7 @@ plugins {
 android {
     namespace = "de.dertyp7214.rboardpatcher"
     compileSdkPreview = "VanillaIceCream"
-    buildToolsVersion = "35.0.0 rc1"
+    buildToolsVersion = "35.0.0 rc3"
 
     buildFeatures.buildConfig = true
 
@@ -18,7 +18,7 @@ android {
         applicationId = "de.dertyp7214.rboardpatcher"
         minSdk = 23
         targetSdk = 34
-        versionCode = 3203
+        versionCode = 3204
         versionName = "3.2"
 
         testInstrumentationRunner  = "androidx.test.runner.AndroidJUnitRunner"
