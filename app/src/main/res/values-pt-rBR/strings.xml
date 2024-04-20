@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Rboard Patcher</string>
+    <string name="search">Pesquisar</string>
+    <string name="patchTheme">Tema de patch</string>
+    <string name="share_theme">Compartilhar tema</string>
+    <string name="addToManager">Adicionar ao gerenciador</string>
+    <string name="pickTheme">Escolher tema</string>
+    <string name="name">Nome</string>
+    <string name="author">Autor</string>
+    <string name="sourceCode">Código fonte</string>
+    <string name="patchesRepo">Repositório de patches</string>
+    <string name="xdaThread">XDA Forums</string>
+    <string name="newTag">Novo</string>
+    <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec laoreet ante quis blandit pellentesque. Sed vulputate arcu ac pharetra iaculis. Nulla massa felis, aliquet in vestibulum vel, tempor condimentum nunc.</string>
+    <string name="fontPreview"><![CDATA[abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 .,:;-_#\'*+\"/=?()&§!ß]]></string>
+    <string name="insert_image">Inserir imagem</string>
+    <string name="update_available">Atualização disponível (%s)</string>
+    <string name="theme_installed">Tema instalado com sucesso!</string>
+    <string name="theme_install_failed">Falha ao instalar o tema!</string>
+</resources>
