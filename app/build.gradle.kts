@@ -18,7 +18,7 @@ android {
         applicationId = "de.dertyp7214.rboardpatcher"
         minSdk = 23
         targetSdk = 34
-        versionCode = 3205
+        versionCode = 3206
         versionName = "3.2"
 
         testInstrumentationRunner  = "androidx.test.runner.AndroidJUnitRunner"
@@ -39,12 +39,12 @@ android {
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_22
+        targetCompatibility = JavaVersion.VERSION_22
     }
 
     kotlinOptions {
-        jvmTarget = JvmTarget.JVM_21.description
+        jvmTarget = JvmTarget.JVM_22.description
         freeCompilerArgs += listOf(
             "-P",
             "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
@@ -53,7 +53,7 @@ android {
 
     tasks.withType<KotlinCompile> {
         kotlinOptions {
-            jvmTarget = JvmTarget.JVM_21.description
+            jvmTarget = JvmTarget.JVM_22.description
         }
     }
 
