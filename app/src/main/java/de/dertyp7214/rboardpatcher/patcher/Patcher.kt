@@ -58,7 +58,7 @@ class Patcher(private val context: Context) {
                     fileMap.patches.add(patch.patchMeta.getSafeName())
                     fileMap.patchFiles[patch.patchMeta.getSafeName()] = this.map {
                         if (it.name == customImage?.first)
-                            customImage?.second?.compress(
+                            customImage.second.compress(
                                 Bitmap.CompressFormat.PNG,
                                 100,
                                 it.outputStream()
