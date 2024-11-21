@@ -25,7 +25,7 @@ jobs:
 
       - uses: nttld/setup-ndk@v1
         with:
-          ndk-version: r26d
+          ndk-version: r27c
 
       - name: Get Commit Message
         id: commitMessage
@@ -34,7 +34,7 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v4
         with:
-          java-version: 22
+          java-version: 23
           distribution: temurin
 
       - name: Cache Gradle dependencies
@@ -92,7 +92,7 @@ jobs:
           signingKey: ${{ secrets.SIGNING_KEY }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
-          buildToolsVersion: 35.0.0-rc3
+          buildToolsVersion: 36.0.0-rc1
 
       - name: List files
         run: ls app/build/outputs/apk/release
