@@ -7,17 +7,17 @@ plugins {
 
 android {
     namespace = "de.dertyp7214.rboardpatcher"
-    compileSdkPreview = "Baklava"
-    buildToolsVersion = "36.0.0-rc1"
+    compileSdk = 36
+    buildToolsVersion = "36.0.0"
 
     buildFeatures.buildConfig = true
 
     defaultConfig {
         applicationId = "de.dertyp7214.rboardpatcher"
         minSdk = 23
-        targetSdk = 35
-        versionCode = 3302
-        versionName = "3.3"
+        targetSdk = 36
+        versionCode = 3400
+        versionName = "3.4"
 
         testInstrumentationRunner  = "androidx.test.runner.AndroidJUnitRunner"
     }
