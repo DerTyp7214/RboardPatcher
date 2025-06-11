@@ -25,7 +25,7 @@ import java.io.File
 
 class LoadThemeActivity : AppCompatActivity() {
 
-    private val recyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerview) }
+    private val recyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerview2) }
     private val themes = arrayListOf<ThemeDataClass>()
     private val adapter by lazy {
         ThemeAdapter(this, themes, this::openPatchActivity)
