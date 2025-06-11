@@ -21,9 +21,20 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '4.0.2'
+
+      - name: Setup Ninja
+        run: sudo apt-get install ninja-build
+
+      - name: Ninja Version
+        run: ninja --version
+
       - uses: nttld/setup-ndk@v1
         with:
-          ndk-version: r27c
+          ndk-version: r28b
 
       - name: Setup JDK
         uses: actions/setup-java@v4
@@ -58,10 +69,11 @@ jobs:
 
       - name: Build Bundle
         id: buildBundle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: wrapper
-          arguments: bundleRelease
+            gradle-version: wrapper
+      - name: AssembleRelease the project
+        run: ./gradlew assembleRelease
 
       - name: Sign artifact
         id: signArtifact

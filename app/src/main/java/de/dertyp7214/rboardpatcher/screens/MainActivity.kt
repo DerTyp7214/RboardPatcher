@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.core.content.FileProvider
@@ -56,7 +57,7 @@ class MainActivity : BaseActivity() {
         }
     }
     private val adapter by lazy { MainOptionAdapter(this, list) }
-    private val recyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerview) }
+    private val recyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerview2) }
 
     private val sourceCode by lazy { findViewById<View>(R.id.sourceCode) }
     private val patchesRepo by lazy { findViewById<View>(R.id.patchesRepo) }
@@ -80,7 +81,6 @@ class MainActivity : BaseActivity() {
         }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         storage.filePickerCallback = object : FilePickerCallback {
             override fun onStoragePermissionDenied(requestCode: Int, files: List<DocumentFile>?) {}
             override fun onCanceledByUser(requestCode: Int) {}
@@ -118,6 +118,7 @@ class MainActivity : BaseActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = adapter
+        recyclerView.setFocusable(false);
 
         sourceCode.setOnClickListener { openUrl(getString(R.string.sourceCodeUrl)) }
         patchesRepo.setOnClickListener { openUrl(getString(R.string.patchesRepoUrl)) }
