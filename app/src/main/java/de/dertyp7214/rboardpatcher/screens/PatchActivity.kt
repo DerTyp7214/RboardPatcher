@@ -66,6 +66,7 @@ import kotlin.collections.set
 import kotlin.math.roundToInt
 
 @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
+@SuppressWarnings("InvalidSetHasFixedSize")
 class PatchActivity : BaseActivity() {
 
     private val mutableLiveBitmap = MutableLiveData<Bitmap?>()
@@ -93,7 +94,7 @@ class PatchActivity : BaseActivity() {
     private val shareTheme by lazy { findViewById<MaterialButton>(R.id.shareButton) }
     private val searchBar by lazy { findViewById<SearchBar>(R.id.searchBar) }
     private val chipContainer by lazy { findViewById<ChipContainer>(R.id.chipContainer) }
-    private val recyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerview) }
+    private val recyclerView by lazy { findViewById<RecyclerView>(R.id.recyclerview2) }
     private val adapter by lazy {
         PatchAdapter(this, list, unfiltered, { patchMeta ->
             openDialog(R.layout.patch_info_popup, true) { dialog ->
