@@ -72,8 +72,8 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
             gradle-version: wrapper
-      - name: AssembleRelease the project
-        run: ./gradlew assembleRelease
+      - name: bundleRelease the project
+        run: ./gradlew bundleRelease
 
       - name: Sign artifact
         id: signArtifact
