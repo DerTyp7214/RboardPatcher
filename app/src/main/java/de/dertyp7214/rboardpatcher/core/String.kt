@@ -12,12 +12,7 @@ import java.util.Locale
 fun String.downloadFile(path: File): File {
     if (path.exists()) path.deleteRecursively()
     path.parentFile?.let { if (!it.exists()) it.mkdirs() }
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        Files.copy(URL(this).openStream(), path.toPath(), StandardCopyOption.REPLACE_EXISTING)
-    } else {
-        URL(this).openStream()
-            .use { Files.copy(it, path.toPath()) }
-    }
+    Files.copy(URL(this).openStream(), path.toPath(), StandardCopyOption.REPLACE_EXISTING)
     return path
 }
 

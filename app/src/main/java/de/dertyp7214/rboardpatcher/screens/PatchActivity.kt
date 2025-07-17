@@ -33,6 +33,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.gson.Gson
 import de.dertyp7214.rboardcomponents.components.SearchBar
+import de.dertyp7214.rboardcomponents.core.dpToPxRounded
 import de.dertyp7214.rboardpatcher.Application
 import de.dertyp7214.rboardpatcher.R
 import de.dertyp7214.rboardpatcher.adapter.PatchAdapter
@@ -42,6 +43,7 @@ import de.dertyp7214.rboardpatcher.api.types.KeyValue
 import de.dertyp7214.rboardpatcher.api.types.PatchMeta
 import de.dertyp7214.rboardpatcher.components.BaseActivity
 import de.dertyp7214.rboardpatcher.components.ChipContainer
+import de.dertyp7214.rboardpatcher.components.MarginItemDecoration
 import de.dertyp7214.rboardpatcher.core.Observe
 import de.dertyp7214.rboardpatcher.core.app
 import de.dertyp7214.rboardpatcher.core.decodeBitmap
@@ -332,6 +334,7 @@ class PatchActivity : BaseActivity() {
             recyclerView.adapter = adapter
             recyclerView.setHasFixedSize(true)
             recyclerView.layoutManager = LinearLayoutManager(this)
+            recyclerView.addItemDecoration(MarginItemDecoration(2.dpToPxRounded(this)))
 
             doAsync({
                 val patches: List<PatchMeta> = GitHub.GboardThemes.Patches["patches.json"]
@@ -424,11 +427,7 @@ class PatchActivity : BaseActivity() {
             progress = { progress, stage ->
                 CoroutineScope(Dispatchers.Main).launch {
                     patchTheme.text = "Applying: $stage"
-                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
                         progressBar.setProgress(progress.roundToInt(), true)
-                    } else {
-                        progressBar.progress = progress.roundToInt()
-                    }
                 }
             }) {
             patchTheme.isEnabled = true

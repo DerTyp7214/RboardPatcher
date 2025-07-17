@@ -70,7 +70,7 @@ class LoadThemeActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
-        recyclerView.addItemDecoration(MarginItemDecoration(2.dp(this), all = true))
+        recyclerView.addItemDecoration(MarginItemDecoration(2.dp(this)))
 
         when {
             scheme != "content" && data != null && data.scheme == "file" -> {
