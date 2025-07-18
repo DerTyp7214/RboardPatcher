@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
+import de.dertyp7214.rboardcomponents.core.dpToPxRounded
 import de.dertyp7214.rboardpatcher.R
 import de.dertyp7214.rboardpatcher.screens.types.MainOption
 
@@ -30,6 +31,23 @@ class MainOptionAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = list[position]
 
+        when (position) {
+            0 -> {
+                if (list.size == 1){
+                    holder.root.setBackgroundResource(R.drawable.color_surface_overlay_background_rounded)
+                }
+                else{
+                    holder.root.setBackgroundResource(R.drawable.color_surface_overlay_background_top)
+
+                }
+            }
+            list.lastIndex -> {
+                holder.root.setBackgroundResource(R.drawable.color_surface_overlay_background_bottom)
+            }
+            else -> {
+                holder.root.setBackgroundResource(R.drawable.color_surface_overlay_background)
+            }
+        }
         holder.icon.setImageResource(item.icon)
         holder.title.text = item.title
 
