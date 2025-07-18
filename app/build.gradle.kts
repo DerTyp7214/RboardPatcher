@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -14,10 +16,10 @@ android {
 
     defaultConfig {
         applicationId = "de.dertyp7214.rboardpatcher"
-        minSdk = 23
+        minSdk = 26
         targetSdk = 36
-        versionCode = 3406
-        versionName = "3.4"
+        versionCode = 3500
+        versionName = "3.5"
 
         testInstrumentationRunner  = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -37,16 +39,18 @@ android {
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.current()
-        targetCompatibility = JavaVersion.current()
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.current().toString()
-        freeCompilerArgs += listOf(
-            "-P",
-            "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
-        )
+    kotlin {
+        compilerOptions {
+            freeCompilerArgs = freeCompilerArgs.get() + listOf(
+                "-P",
+                "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true",
+                "-Xsuppress-version-warnings"
+            )
+            jvmToolchain(23)
+            jvmTarget.set(JvmTarget.JVM_23)
+        }
     }
 
     packaging {

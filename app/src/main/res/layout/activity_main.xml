@@ -170,7 +170,7 @@
             android:layout_marginBottom="32dp"
             android:translationZ="0dp"
             app:cardBackgroundColor="?android:attr/colorBackground"
-            app:cardCornerRadius="@dimen/roundCorners"
+            app:cardCornerRadius="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

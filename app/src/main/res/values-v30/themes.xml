@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.RboardPatcher" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.RboardPatcher" parent="Theme.Material3Expressive.DayNight.NoActionBar">
         <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
 
         <item name="android:statusBarColor">?android:attr/colorBackground</item>

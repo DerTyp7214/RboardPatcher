@@ -76,6 +76,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/replaceImageButton"
+        style="@style/Widget.Material3Expressive.Button.TonalButton"
         android:layout_width="0dp"
         android:layout_height="64dp"
         android:layout_marginStart="24dp"
@@ -104,7 +105,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/ok"
-            style="@style/Widget.Material3.Button.TextButton.Dialog"
+            style="@style/Widget.Material3Expressive.Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"

@@ -96,7 +96,7 @@ class PickThemeActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
-        recyclerView.addItemDecoration(MarginItemDecoration(2.dp(this), all = true))
+        recyclerView.addItemDecoration(MarginItemDecoration(2.dp(this)))
 
         Application.rboardService?.apply {
             doAsync({

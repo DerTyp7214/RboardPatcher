@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
+import de.dertyp7214.rboardcomponents.core.dpToPxRounded
 import de.dertyp7214.rboardpatcher.R
 import de.dertyp7214.rboardpatcher.api.types.PatchMeta
 import de.dertyp7214.rboardpatcher.core.getAttr
@@ -100,7 +102,36 @@ class PatchAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val patchMeta = list[position]
+        when (position) {
+            0 -> {
+                if (list.size == 1){
+                    holder.root.setBackgroundResource(R.drawable.color_surface_overlay_background_rounded)
+                    val param = holder.root.layoutParams as ViewGroup.MarginLayoutParams
+                    param.setMargins(16.dpToPxRounded(context), 4.dpToPxRounded(context), 16.dpToPxRounded(context), 0.dpToPxRounded(context))
+                    holder.root.layoutParams = param
 
+                }
+                else{
+                    holder.root.setBackgroundResource(R.drawable.color_surface_overlay_background_top)
+                    val param = holder.root.layoutParams as ViewGroup.MarginLayoutParams
+                    param.setMargins(16.dpToPxRounded(context), 4.dpToPxRounded(context), 16.dpToPxRounded(context), 0.dpToPxRounded(context))
+                    holder.root.layoutParams = param
+
+                }
+            }
+            list.lastIndex -> {
+                holder.root.setBackgroundResource(R.drawable.color_surface_overlay_background_bottom)
+                val param = holder.root.layoutParams as ViewGroup.MarginLayoutParams
+                param.setMargins(16.dpToPxRounded(context), 0.dpToPxRounded(context), 16.dpToPxRounded(context), 4.dpToPxRounded(context))
+                holder.root.layoutParams = param
+            }
+            else -> {
+                holder.root.setBackgroundResource(R.drawable.color_surface_overlay_background)
+                val param = holder.root.layoutParams as ViewGroup.MarginLayoutParams
+                param.setMargins(16.dpToPxRounded(context), 0.dpToPxRounded(context), 16.dpToPxRounded(context), 0.dpToPxRounded(context))
+                holder.root.layoutParams = param
+            }
+        }
         if (selected[patchMeta]) holder.root.setCardBackgroundColor(selectedColor)
         else holder.root.setCardBackgroundColor(Color.TRANSPARENT)
 
@@ -122,8 +153,43 @@ class PatchAdapter(
             if (isEnabled) {
                 selected[patchMeta] = !selected[patchMeta]
 
-                if (selected[patchMeta]) holder.root.setCardBackgroundColor(selectedColor)
-                else holder.root.setCardBackgroundColor(Color.TRANSPARENT)
+                if (selected[patchMeta]) {
+                    when (position) {
+                        0 -> {
+                            if (list.size == 1) {
+                                holder.root.setBackgroundResource(R.drawable.color_surface_overlay_background_rounded_colored)
+                            } else {
+                                holder.root.setBackgroundResource(R.drawable.color_surface_overlay_background_top_colored)
+                            }
+                        }
+
+                        list.lastIndex -> {
+                            holder.root.setBackgroundResource(R.drawable.color_surface_overlay_background_bottom_colored)
+                        }
+
+                        else -> {
+                            holder.root.setBackgroundResource(R.drawable.color_surface_overlay_background_colored)
+                        }
+                    }
+                }
+                else
+                    when (position) {
+                        0 -> {
+                            if (list.size == 1) {
+                                holder.root.setBackgroundResource(R.drawable.color_surface_overlay_background_rounded)
+                            } else {
+                                holder.root.setBackgroundResource(R.drawable.color_surface_overlay_background_top)
+                            }
+                        }
+
+                        list.lastIndex -> {
+                            holder.root.setBackgroundResource(R.drawable.color_surface_overlay_background_bottom)
+                        }
+
+                        else -> {
+                            holder.root.setBackgroundResource(R.drawable.color_surface_overlay_background)
+                        }
+                    }
             }
         }
     }
