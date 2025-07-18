@@ -76,6 +76,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/replaceImageButton"
+        style="@style/Widget.Material3Expressive.Button.TonalButton"
         android:layout_width="0dp"
         android:layout_height="64dp"
         android:layout_marginStart="24dp"
