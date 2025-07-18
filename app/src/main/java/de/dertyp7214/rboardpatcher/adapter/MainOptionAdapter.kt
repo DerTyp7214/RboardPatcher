@@ -38,7 +38,6 @@ class MainOptionAdapter(
                 }
                 else{
                     holder.root.setBackgroundResource(R.drawable.color_surface_overlay_background_top)
-
                 }
             }
             list.lastIndex -> {

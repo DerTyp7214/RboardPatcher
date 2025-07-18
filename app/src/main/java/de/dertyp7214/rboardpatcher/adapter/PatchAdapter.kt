@@ -107,14 +107,14 @@ class PatchAdapter(
                 if (list.size == 1){
                     holder.root.setBackgroundResource(R.drawable.color_surface_overlay_background_rounded)
                     val param = holder.root.layoutParams as ViewGroup.MarginLayoutParams
-                    param.setMargins(16.dpToPxRounded(context), 0.dpToPxRounded(context), 16.dpToPxRounded(context), 0.dpToPxRounded(context))
+                    param.setMargins(16.dpToPxRounded(context), 4.dpToPxRounded(context), 16.dpToPxRounded(context), 0.dpToPxRounded(context))
                     holder.root.layoutParams = param
 
                 }
                 else{
                     holder.root.setBackgroundResource(R.drawable.color_surface_overlay_background_top)
                     val param = holder.root.layoutParams as ViewGroup.MarginLayoutParams
-                    param.setMargins(16.dpToPxRounded(context), 0.dpToPxRounded(context), 16.dpToPxRounded(context), 0.dpToPxRounded(context))
+                    param.setMargins(16.dpToPxRounded(context), 4.dpToPxRounded(context), 16.dpToPxRounded(context), 0.dpToPxRounded(context))
                     holder.root.layoutParams = param
 
                 }
